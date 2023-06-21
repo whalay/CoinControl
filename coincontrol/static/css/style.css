@@ -126,7 +126,7 @@ nav{
 .hero-txt a{
     color: var(--s-bold-color);
     border-bottom: 2px dashed var(--s-bold-color);
-    width: 25%;
+    width: 150px;
     font-weight: 500;
     transition: all .36s ease;
 }
