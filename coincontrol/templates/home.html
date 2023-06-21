@@ -1,5 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}Manage your finances easily and more efficiently{% endblock %}
 {% block content %}
-    
+     <!-- hero section -->
+     <div class="hero">
+        <div class="container">
+            <div class="hero-txt">
+                <h1>Manage your finances <br> easily and more <br> efficiently.</h1>
+                <span>your convenience and comfort in managing <br>day to day finances</span>
+                <a href="#">Lets get started</a>
+            </div>
+            
+            <div class="hero-bg">
+                <img src="{{ url_for('static', filename='img/hero-bg.png') }}" alt="hero-bg">
+            </div>
+            
+        </div>
+    </div>
+    <!-- hero section end -->
 {% endblock %}

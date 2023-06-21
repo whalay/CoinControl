@@ -13,8 +13,136 @@
 :root{
     --bg-color: #FFFFFF;
     --bold-color: #1A194D;
-    --s-bold-color: #CBCBD9;
+    --s-bold-color: #62618F;
+    --s-light-color: #CBCBD9;
     --light-color: #D9D9D9;
     --button-color: #EE6338;
 }
 
+body{
+    background:var(--bg-color);
+    color: var(--bold-color);
+}
+
+/* header section */
+header{
+    width: 100%;
+    padding: 20px 5%;
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    right: 0;
+    transition: all .35s ease;
+    background-color: var(--bg-color);
+}
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo{
+    width: 170px;
+    height: auto;
+}
+
+.logo img{
+    width: 100%;
+}
+
+.menu{
+    width: 25px;
+    height: auto;
+}
+
+.menu img{
+    width: 100%;
+    display: none;
+}
+
+.navlist{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navlist li{
+    padding: 10px;
+}
+
+.navlist li a{
+    font-size: 1rem;
+    color: var(--s-bold-color);
+    transition: all .36s ease;
+}
+
+.navlist li a:hover{
+    color: var(--button-color);
+}
+
+#nav-btn{
+    border: 2px solid var(--bold-color);
+    padding: 10px;
+    border-radius: 10px;
+    transition: all .10s ease;
+}
+
+#nav-btn:hover{
+    color: var(--bg-color);
+    border: 2px solid var(--button-color);
+    background-color: var(--button-color);
+}
+
+/* header section ends */
+
+/* hero section */
+.hero{
+    position: relative;
+    
+}
+
+.container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 100px 5%;
+    min-height: 100vh;
+}
+.hero-txt{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.hero-txt h1{
+    font-size: 50px;
+    letter-spacing: 1px;
+}
+
+.hero-txt span{
+    font-size:1rem;
+}
+
+.hero-txt a{
+    color: var(--s-bold-color);
+    border-bottom: 2px dashed var(--s-bold-color);
+    width: 25%;
+    font-weight: 500;
+    transition: all .36s ease;
+}
+
+.hero-txt a:hover{
+    color: var(--button-color);
+    border-bottom: 2px dashed var(--button-color);
+}
+
+.hero-bg{
+    width: 650px;
+}
+
+.hero-bg img{
+    width: 100%;
+    height: auto;
+}
+
+/* hero section end */

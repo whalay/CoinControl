@@ -3,16 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon">
+    <title> {% block title %}{% endblock %} | CoinControl</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title> {% block title %}{% endblock %} | CoinControl</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <!-- header section -->
+    <header>
+        <nav>
+            <a href="#" class="logo"><img src="{{ url_for('static', filename='img/coincontrol.png') }}" alt="coincontrol-logo"></a>
+            <div class="menu" id="menu-icon"><img src="{{ url_for('static', filename='img/menu.svg') }}" alt="coincontrol-icon"></div>
+            <ul class="navlist">
+                <li><a href="#">How it works</a></li>
+                <li><a href="#">Benefit</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#" id="nav-btn">Login</a></li>
+                <li><a href="#" id="nav-btn">Create free account</a></li>
+            </ul> 
+        </nav>
+    </header>
+    <!-- header section end -->
+
     {% block content %}
         
     {% endblock %}
+    <footer>
+        
+    </footer>
 </body>
 </html>
 
