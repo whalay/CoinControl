@@ -2,6 +2,8 @@ from flask import Flask
 from coincontrol.config import config
 from coincontrol.auth import auth
 from coincontrol.main import main
+from coincontrol.api.auth import api_auth
+from coincontrol.api.main import api_main
 from coincontrol.extensions import db
 
 def create_app(config_name='development'):
@@ -14,6 +16,8 @@ def create_app(config_name='development'):
     # register blueprints here
     app.register_blueprint(auth)
     app.register_blueprint(main)
+    app.register_blueprint(api_auth)
+    app.register_blueprint(api_main)
    
     # initialize the db 
     db.init_app(app)
