@@ -4,13 +4,13 @@ auth = Blueprint("auth", __name__, template_folder='templates', static_folder='s
 
 @auth.route('/register', methods=["POST"])
 def register():
-    pass
+    return "pass"
 
 @auth.route('/login', methods=["POST"])
 def login():
-    pass
+    return "pass"
 
 @auth.route('/logout', methods=["POST"])
 def logout():
-    pass
+    return "pass"
 
