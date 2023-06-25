@@ -8,7 +8,7 @@ class AuthTestCase(unittest.TestCase):
    
     def create_app(self):
         #Creating a test flask application 
-        #It takes in a parameter called testing which is passed as an argument to the config_name variable
+        #Which takes in a parameter called testing which is passed as an argument to the config_name variable
         app = create_app(config_name='testing')
         return app
     

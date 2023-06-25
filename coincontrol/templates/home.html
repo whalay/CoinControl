@@ -16,4 +16,40 @@
         </div>
     </div>
     <!-- hero section end -->
+
+    <!-- Features section -->
+    <section class="features">
+        <div class="container">
+            <span>features</span>
+            <h2>Our Special Features</h2>
+            <p>Powerful metrics to better understand your finances are right at your fingertips, once you start working with them!</p>
+
+            <div class="feature-bx">
+                <div class="bx">
+                    <div id="expense-icon">
+                        <img src="{{ url_for('static', filename='img/expense-icon.png') }}" alt="expense-icon">
+                    </div>
+                    <h3>Expense Tracking</h3>                
+                    <p>Effortlessly track your expenses and categorize them for better financial management.</p>
+                </div>
+    
+                <div class="bx">
+                    <div id="budget-icon">
+                        <img src="{{ url_for('static', filename='img/budget-icon.png') }}" alt="budget-icon">
+                    </div>
+                    <h3>Budgeting</h3>
+                    <p>Set budgets for different spending categories and monitor your progress with visualizations.</p>
+                </div>
+    
+                <div class="bx">
+                    <div id="report-icon">
+                        <img src="{{ url_for('static', filename='img/report-icon.png') }}" alt="report-icon">
+                    </div>
+                    <h3>Reports</h3>
+                    <p>Generate comprehensive reports to gain insights into your financial habits and patterns.</p>         
+                </div>
+            </div>
+          
+        </div>
+    </section>
 {% endblock %}
