@@ -337,3 +337,21 @@ section{
     color: var(--bg-color);
 }
 
+/* cta section end */
+
+/* footer start */
+footer{
+    width: 100%;
+    background-color: #f9f9f9;
+}
+
+footer .container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+footer .container p{
+    color: var(--s-bold-color);
+}
