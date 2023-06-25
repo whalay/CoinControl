@@ -33,6 +33,12 @@ h2{
     text-transform: capitalize;
 }
 
+h3{
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--bold-color);
+}
+
 span{
     font-weight: 500;
     font-size: 0.9rem;
@@ -107,7 +113,7 @@ nav{
     transition: all .20s ease;
 }
 #nav-btn{
-    border: 1.5px solid var(--bold-color);
+    border: 2px solid #d9d9d947;
     background-color: var(--bg-color);
     padding: 10px 30px;
     border-radius: 10px;
@@ -119,7 +125,7 @@ nav{
 }
 #nav-btn:hover{
     color: var(--bg-color);
-    border: 1.5px solid var(--button-color);
+    border: 2px solid var(--button-color);
     background-color: var(--button-color);
 }
 
@@ -169,7 +175,7 @@ nav{
 }
 
 .hero-bg{
-    width: 650px;
+    width: 50%;
 }
 
 .hero-bg img{
@@ -203,7 +209,7 @@ section{
     grid-template-columns: repeat(auto-fit, minmax(270px, auto));
     gap: 1.3rem;
     align-items: center;
-    margin-top: 4rem;
+    margin-top: 3rem;
 }
 
 .feature-bx .bx{
@@ -211,10 +217,16 @@ section{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 25px;
     border-radius: 1rem;
     background-color: #f2f2f2;
-    padding: 30px 10px;
+    padding: 50px;
+    transition: all .35s ease;
+}
+
+.feature-bx .bx:hover{
+    transform: scale(0.9) translateY(-5px);  
+    cursor: pointer;
 }
 
 #expense-icon, #budget-icon, #report-icon{
@@ -240,5 +252,88 @@ section{
 
 #report-icon{
     background-color: #1FB141;
+}
+
+.feature-bx .bx p{
+    font-size: 0.8rem;
+    color: var(--s-bold-color);
+    letter-spacing: 0.5px;
+}
+
+/* feature section end */
+
+/* benefit section */
+.benefit .container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.benefit-img{
+    width: 55%;
+    background-color: aliceblue;
+    border-radius: 30px 0;
+}
+
+.benefit-img img{
+    width: 100%;
+   
+}
+
+.benefit-body{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    width: 40%;
+}
+
+.benefit-list li{
+    padding-top: 20px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+/* Benefit section end */
+
+/* cta section */
+.call-to-action .container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--s-bold-color);
+    border-radius: 10px;
+    gap: 20px;
+    padding: 20px;
+    
+}
+
+.call-to-action .container h2, .call-to-action .container p{
+    color: var(--bg-color);
+}
+
+.call-to-action .container h2{
+    font-weight: 400;
+    font-size: 2rem;
+}
+
+.call-to-action .container p{
+    font-size: 1rem;
+}
+
+.call-to-action .container a{
+    background-color: #d9d9d947;
+    color: var(--light-color);
+    font-weight: 500;
+    padding: 10px 30px;
+    border-radius: 10px;
+    transition: all .20s ease;
+}
+
+.call-to-action .container a:hover{
+    background-color: var(--button-color);
+    color: var(--bg-color);
 }
 
