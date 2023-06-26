@@ -120,8 +120,8 @@ nav{
     transition: all .20s ease;
 }
 #nav-login-btn:hover{
-    color: var(--button-color);
-    background-color: var(--bg-color);
+    color: var(--bg-color);
+    background-color: var(--button-color);
 }
 #nav-btn:hover{
     color: var(--bg-color);
