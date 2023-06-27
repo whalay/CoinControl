@@ -10,10 +10,44 @@
                 <img src="{{ url_for('static', filename='img/signin-bg.png') }}" alt="signin-bg"> 
             </div>
             <div class="box-02">
-                <div class="form-box">
-                    <form action="">
-                        
+                <div class="form-bx">
+                    <h2>Welcome back!</h2>
+                    <p>Start managing your finance faster and better.</p>
+                    <form action="" method="post">
+                        <div class="input-bx">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email" placeholder="you@coincontrol.com">
+                            <i class='bx bx-envelope'></i>
+                        </div>
+
+                         <div class="input-bx">
+                            <label for="password">Password</label>
+                            <input type="password" name="pass" id="pass" placeholder="At least 8 characters">
+                            <i class='bx bx-lock-alt'></i>
+
+                        </div>
+
+                        <a href="">Forgot password?</a>
+
+                        <input type="submit" value="Login">
                     </form>
+
+                    <div class="line-bx">
+                        <span class="line"></span>
+                        <p>or</p>
+                        <span class="line"></span>
+                    </div>
+
+                    <div class="google-bx">
+                        <img src="{{ url_for('static', filename='img/google.svg') }}" alt="google-icon"> 
+                        <a href="#">Sign in with Google</a>
+                    </div>
+                    
+
+                    <div class="form-footer">
+                        <p>Don't you have an account?</p><a href="#">Sign Up</a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
