@@ -1,1 +1,62 @@
-ECHO is on.
+{% extends 'auth/base.html' %}
+{% block title %}Sign up{% endblock %}
+<!--Sign in section -->
+{% block content %}
+    <section class="auth au">
+        <div class="container">
+
+            <div class="box-01">
+                <a href="{{ url_for('main.home')}}" class="logo"><img src="{{ url_for('static', filename='img/coincontrol.png') }}" alt="coincontrol-logo"></a>
+                <img src="{{ url_for('static', filename='img/signup-bg.png') }}" alt="signup-bg"> 
+            </div>
+            <div class="box-02">
+                <div class="form-bx">
+                    <h2>Create an account</h2>
+                    <p>Welcome to the future of secure finance management</p>
+                    <form action="" method="post">
+                        <div class="form-flex">
+                            <div class="input-bx">
+                                <label for="name">Name</label>
+                                <input type="name" name="name" id="name" placeholder="username">
+                                <i class='bx bx-envelope'></i>
+                            </div>
+    
+                            <div class="input-bx">
+                                <label for="email">Email</label>
+                                <input type="email" name="email" id="email" placeholder="you@coincontrol.com">
+                                <i class='bx bx-envelope'></i>
+                            </div>
+                        </div>
+
+                         <div class="input-bx">
+                            <label for="password">Password</label>
+                            <input type="password" name="pass" id="pass" placeholder="At least 8 characters">
+                            <i class='bx bx-lock-alt'></i>
+
+                        </div>
+
+                        <input type="submit" value="Sign up">
+                    </form>
+
+                    <div class="line-bx">
+                        <span class="line"></span>
+                        <p>or</p>
+                        <span class="line"></span>
+                    </div>
+                    
+                    <div class="google-bx">
+                        <img src="{{ url_for('static', filename='img/google.svg') }}" alt="google-icon"> 
+                        <a href="#">Sign up with Google</a>
+                    </div>
+                    
+
+                    <div class="form-footer">
+                        <p>Already have an account?</p><a href="{{ url_for('auth.login') }}">Log In</a>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+<!--Sign in section end -->

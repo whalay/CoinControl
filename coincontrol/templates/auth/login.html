@@ -2,11 +2,11 @@
 {% block title %}Sign in{% endblock %}
 <!--Sign in section -->
 {% block content %}
-    <section class="sign-in">
+    <section class="auth">
         <div class="container">
 
             <div class="box-01">
-                <a href="#" class="logo"><img src="{{ url_for('static', filename='img/coincontrol.png') }}" alt="coincontrol-logo"></a>
+                <a href="{{ url_for('main.home') }}" class="logo"><img src="{{ url_for('static', filename='img/coincontrol.png') }}" alt="coincontrol-logo"></a>
                 <img src="{{ url_for('static', filename='img/signin-bg.png') }}" alt="signin-bg"> 
             </div>
             <div class="box-02">
@@ -27,7 +27,7 @@
 
                         </div>
 
-                        <a href="">Forgot password?</a>
+                        <a href="#">Forgot password?</a>
 
                         <input type="submit" value="Login">
                     </form>
@@ -43,9 +43,8 @@
                         <a href="#">Sign in with Google</a>
                     </div>
                     
-
                     <div class="form-footer">
-                        <p>Don't you have an account?</p><a href="#">Sign Up</a>
+                        <p>Don't you have an account?</p><a href="{{ url_for('auth.register') }}">Sign Up</a>
                     </div>
                     
                 </div>
