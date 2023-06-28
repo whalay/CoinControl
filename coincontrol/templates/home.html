@@ -7,10 +7,10 @@
             <div class="hero-txt">
                 <h1>Manage your finances <br> easily and more <br> efficiently.</h1>
                 <span>your convenience and comfort in managing <br>day to day finances</span>
-                <a href="{{ url_for('auth.register') }}">Lets get started</a>
+                <a href="#">Lets get started</a>
             </div>
             
-            <div class="hero-bg">
+            <div class="hero-bg" data-aos="zoom-in">
                 <img src="{{ url_for('static', filename='img/hero-bg.png') }}" alt="hero-bg">
             </div>
         </div>
@@ -25,7 +25,7 @@
             <p>Powerful metrics to better understand your finances are right at your fingertips, once you start working with them!</p>
 
             <div class="feature-bx">
-                <div class="bx">
+                <div class="bx" data-aos="fade-up" data-aos-delay="300">
                     <div id="expense-icon">
                         <img src="{{ url_for('static', filename='img/expense-icon.png') }}" alt="expense-icon">
                     </div>
@@ -33,7 +33,7 @@
                     <p>Effortlessly track your expenses and categorize them for better financial management.</p>
                 </div>
     
-                <div class="bx">
+                <div class="bx" data-aos="fade-up" data-aos-delay="500">
                     <div id="budget-icon">
                         <img src="{{ url_for('static', filename='img/budget-icon.png') }}" alt="budget-icon">
                     </div>
@@ -41,7 +41,7 @@
                     <p>Set budgets for different spending categories and monitor your progress with visualizations.</p>
                 </div>
     
-                <div class="bx">
+                <div class="bx" data-aos="fade-up" data-aos-delay="700">
                     <div id="report-icon">
                         <img src="{{ url_for('static', filename='img/report-icon.png') }}" alt="report-icon">
                     </div>
@@ -57,10 +57,10 @@
     <!-- Benefit section -->
     <section class="benefit">
         <div class="container">
-            <div class="benefit-img">
+            <div class="benefit-img" data-aos="zoom-in-up" data-aos-delay="300">
                 <img src="{{ url_for('static', filename='img/benefit-bg.png') }}" alt="benefit-bg">
             </div>
-
+            
             <div class="benefit-body">
                 <h2>What benefit will <br>you get ?</h2>
 
@@ -78,7 +78,7 @@
 
     <!-- cta section -->
     <section class="call-to-action">
-        <div class="container">
+        <div class="container" data-aos="flip-up" data-aos-delay="500">
             <h2>Start Managing Your Finances Today</h2>
             <p>Sign up now and take control of your financial future.</p>
             <a href="{{ url_for('auth.register') }}" class="btn">Sign Up</a>
