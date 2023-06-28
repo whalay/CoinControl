@@ -13,5 +13,4 @@ def login():
 
 @auth.route('/logout', methods=["GET", "POST"])
 def logout():
-    return redirect
-
+    return "pass"
