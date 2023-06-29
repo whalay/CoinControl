@@ -1,4 +1,7 @@
 from flask import Flask
+from flask_jwt_extended import JWTManager
+from flask_wtf import CSRFProtect 
+from flask_cors import CORS
 from coincontrol.config import config
 from coincontrol.auth import auth
 from coincontrol.main import main
@@ -7,7 +10,7 @@ from coincontrol.api.auth import api_auth
 from coincontrol.api.main import api_main
 from coincontrol.auth import auth
 from coincontrol.main import main
-from flask_jwt_extended import JWTManager
+
 
 def create_app(config_name='development'):
     app = Flask(__name__)
@@ -24,6 +27,11 @@ def create_app(config_name='development'):
    
     # initialize jwtmanager
     jwt = JWTManager(app)
+    
+    # initialize csrf for flask forms
+    CSRFProtect(app)
+    app.config['WTF_CSRF_ENABLED'] = False
+   
     
     # initialize the db 
     db.init_app(app)

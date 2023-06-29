@@ -39,8 +39,9 @@ class AuthTestCase(unittest.TestCase):
             "/register",
             json={
                 "username": "testuser",
-                "password": "testpassword",
                 "email": "test@gmail.com",
+                "password": "testpassword",
+                "confirm_password": "testpassword"  
             },
         )
         self.assertEqual(response.status_code, 200)
@@ -49,9 +50,9 @@ class AuthTestCase(unittest.TestCase):
     def test_user_login(self):
         # Testing user login process
         username = "testuser"
-        password = "testpassword"
         email = "test@gmail.com"
-        user = Users(username=username, password=password, email=email)
+        password = "testpassword"
+        user = Users(username=username, email=email, password=password)
         user.generate_password_hash(password)
         db.session.add(user)
         db.session.commit()
