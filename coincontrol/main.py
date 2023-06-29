@@ -82,6 +82,7 @@ def reports_budgets():
     pass
 # ---------------------------------------------------------------------------------------
 
+
 # Account Settings and security route
 @main.route('/profile', methods=["GET", "POST"])
 def profile():

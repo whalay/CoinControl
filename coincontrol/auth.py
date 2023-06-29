@@ -14,3 +14,10 @@ def login():
 @auth.route('/logout', methods=["GET", "POST"])
 def logout():
     return "pass"
+
+
+
+# Token confirmation route
+@auth.route('/confirm/<token>', methods=["GET"])
+def confirm_token(token):
+    return "token"

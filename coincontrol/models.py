@@ -1,5 +1,7 @@
 from coincontrol.extensions import db
 from datetime import datetime
+from coincontrol.extensions import bcrypt
+
 
 
 class Users(db.Model):
@@ -13,7 +15,12 @@ class Users(db.Model):
     date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     date_verified = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     
-
+    def generate_password_hash(self, password):
+        self.password = bcrypt.generate_password_hash(password, 10 )
+    
+    def is_verified(self, token):
+        self.verified = True
+        
     def __repr__(self):
         return f"Users(username:'{self.username}', email:'{self.email}')"
         

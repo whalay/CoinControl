@@ -3,11 +3,11 @@ from coincontrol.config import config
 from coincontrol.auth import auth
 from coincontrol.main import main
 from coincontrol.extensions import db
-from flask_restful import Api
 from coincontrol.api.auth import api_auth
 from coincontrol.api.main import api_main
 from coincontrol.auth import auth
 from coincontrol.main import main
+from flask_jwt_extended import JWTManager
 
 def create_app(config_name='development'):
     app = Flask(__name__)
@@ -22,7 +22,8 @@ def create_app(config_name='development'):
     app.register_blueprint(api_auth)
     app.register_blueprint(api_main)
    
-    
+    # initialize jwtmanager
+    jwt = JWTManager(app)
     
     # initialize the db 
     db.init_app(app)
