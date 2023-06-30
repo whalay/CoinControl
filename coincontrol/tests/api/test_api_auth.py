@@ -15,6 +15,8 @@ Methods:
 Fields:
 - None.
 """
+
+
 class TestRegister(unittest.TestCase):
     def create_app(self):
         # Creating a test flask application
@@ -42,19 +44,30 @@ class TestRegister(unittest.TestCase):
         email = "testuser@test.com"
         password = "Test1234@"
         confirm_password = "Test1234@"
-        
+
         data = {
-            'username': username,
-            'email': email,
-            'password': password,
-            'confirm_password': confirm_password
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirm_password": confirm_password,
         }
-        
+
         tester = self.client
-        response = tester.post( "/api/v1/register", json=data)
-        
+        response = tester.post("/api/v1/register", json=data)
+
+        r = {
+            "status": 201,
+            "message": "User created sucessfully",
+            "data": {
+                "status": "success",
+                "username": username, 
+                "email": email
+            }
+        }
+
+        # Verify the response status code and the returned JSON data
         self.assertEqual(response.status_code, 201)
-     
+        self.assertEqual(r, response.json)
 
     # Tests that a user can register with valid data and special characters in password
     def test_user_registration_with_special_characters_in_password(self):
@@ -62,39 +75,88 @@ class TestRegister(unittest.TestCase):
         email = "testuser@test.com"
         password = "Test1234@#"
         confirm_password = "Test1234@#"
-        
+
         data = {
-            'username': username,
-            'email': email,
-            'password': password,
-            'confirm_password': confirm_password
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirm_password": confirm_password,
         }
-        
+
         tester = self.client
-        response = tester.post( "/api/v1/register", json=data)
-        
+        response = tester.post("/api/v1/register", json=data)
+
+        r = {
+            "status": 201,
+            "message": "User created sucessfully",
+            "data": {
+                "status": "success",
+                "username": username, 
+                "email": email
+            }
+        }
+
         # Verify the response status code and the returned JSON data
         self.assertEqual(response.status_code, 201)
-    
-       
-      
+        self.assertEqual(r, response.json)
+
     # Tests that a user cannot register without a username
     def test_user_registration_with_missing_username(self):
         username = " "
         email = "testuser@test.com"
         password = "Test1234@#A"
         confirm_password = "Test1234@#A"
-        
+
         data = {
-            'username': username,
-            'email': email,
-            'password': password,
-            'confirm_password': confirm_password
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirm_password": confirm_password,
         }
-        
+
         tester = self.client
-        response = tester.post( "/api/v1/register", json=data)
-        
-        self.assertEqual(response.status_code, 400)
-        
+        response = tester.post("/api/v1/register", json=data)
        
+        r = {
+            "status": 400,
+            "message": "User not created",
+            "data": {
+                "status":"failed",
+                "error": {"username": ["This field is required."]}
+            }
+        }
+
+        # Verify the response status code and the returned JSON data
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(r, response.json)
+
+    # Tests that a user cannot register without an email
+    def test_user_registration_with_missing_email(self):
+        username = "testuser"
+        email = ""
+        password = "Test1234@#A"
+        confirm_password = "Test1234@#A"
+
+        data = {
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirm_password": confirm_password,
+        }
+
+        tester = self.client
+        response = tester.post("/api/v1/register", json=data)
+        
+        r = {
+            "status": 400,
+            "message": "User not created",
+            "data": {
+                "status":"failed",
+                "error": {"email": ["This field is required."]}
+            }
+        }
+
+        # Verify the response status code and the returned JSON data
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(r, response.json)
+
