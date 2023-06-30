@@ -2,12 +2,13 @@ import unittest
 from coincontrol.extensions import db
 from coincontrol.models import Users
 from coincontrol import create_app
+from unittest.mock import patch
 
 """
 Code Analysis
 
 Main functionalities:
-The Register class is a Flask RESTful resource that handles user registration. It receives user data in JSON format, validates it using the RegistrationForm class, creates a new user in the Users table of the database, and returns a response with a status code and a message.
+The Register class is responsible for handling user registration. It receives user data in JSON format, validates it using the RegistrationForm class, creates a new user in the Users table of the database, and returns a response with a status code and a message.
 
 Methods:
 - post: receives user data, validates it using RegistrationForm, creates a new user in the database, and returns a response with a status code and a message.
@@ -159,4 +160,98 @@ class TestRegister(unittest.TestCase):
         # Verify the response status code and the returned JSON data
         self.assertEqual(response.status_code, 400)
         self.assertEqual(r, response.json)
+
+
+"""
+Code Analysis
+
+Main functionalities:
+The Login class is responsible for handling user login requests. It receives user data in JSON format, checks if the email exists in the database, and verifies the password. If the credentials are correct, it generates access and refresh tokens using the Flask-JWT-Extended extension and returns them in the response.
+
+Methods:
+- post: receives the user data in JSON format, checks the credentials, generates access and refresh tokens, and returns them in the response.
+
+Fields:
+- No relevant fields in the Login class. However, the Users class defines the fields for the user model, such as user_id, username, password, email, verified, is_admin, date_created, and date_verified.
+"""
+class TestLogin(unittest.TestCase):
+    def create_app(self):
+        app = create_app(config_name="testing")
+        return app
+
+    def setUp(self):
+        self.app = self.create_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client(use_cookies=True)
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+    
+    # Tests that a valid email and password returns access and refresh tokens
+    def test_valid_login_returns_tokens(self):
+        username = 'test'
+        email = 'test@test.com'
+        password = 'Test2@'
+
+        user = Users(username=username, email=email, password=password)
+        user.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+
+        tester = self.client
+        response = tester.post("/api/v1/login", json={'email': email, 'password': password})
+        res = response.json
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('access_token', res['data'])
+        self.assertIn('refresh_token', res['data'])
+
+    # Tests that a valid email and password returns status code 200
+    def test_valid_login_returns_status_code_200(self):
+        username = 'test'
+        email = 'test@test.com'
+        password = 'Test2@'
+
+        user = Users(username=username, email=email, password=password)
+        user.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        tester = self.client
+        response = tester.post("/api/v1/login", json={'email': email, 'password': password})
+        self.assertEqual(response.status_code, 200)
+        
+    
+    # Tests that an invalid email returns status code 400
+    def test_invalid_email(self):
+        username = 'test'
+        email = 'test@test.com'
+        password = 'Test2@'
+
+        user = Users(username=username, email=email, password=password)
+        user.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        tester = self.client
+        response = tester.post("/api/v1/login", json={'email': 'test1@test.com', 'password': password})
+        self.assertEqual(response.status_code, 400)
+
+      # Tests that an invalid password returns status code 401
+    def test_invalid_password(self):
+        username = 'test'
+        email = 'test@test.com'
+        password = 'Test2@'
+
+        user = Users(username=username, email=email, password=password)
+        user.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        tester = self.client
+        response = tester.post("/api/v1/login", json={'email': email, 'password': 'invalid'})
+        self.assertEqual(response.status_code, 401)
 

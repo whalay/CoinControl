@@ -15,6 +15,7 @@ auth = HTTPBasicAuth()
 
 
 class Register(Resource):
+    
     @monitor
     def post(self):
         # app login written here
@@ -80,7 +81,14 @@ class Login(Resource):
         user = Users.query.filter_by(email=email).first()
 
         if not user:
-           
+            response = {
+                "status": 400,
+                "message": "This user does not exist",
+                "data": {
+                    "status": "failed",
+                    "error": "Invalid credentials"
+                }
+            }
             return response, 400
 
         if not bcrypt.check_password_hash(user.password, password):
