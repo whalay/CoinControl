@@ -31,7 +31,7 @@ def create_app(config_name='development'):
    
     # initialize jwt
     jwt = JWTManager(app)
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=30)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=4)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=1)
     
     from coincontrol.api.blacklist import BLACKLIST
@@ -49,7 +49,31 @@ def create_app(config_name='development'):
                     "error": "token_revoked",
                 },
             }
-        return response
+        return response , 401
+    
+    @jwt.invalid_token_loader
+    def invalid_token_callback(invalid_token):
+        response = {
+            "status": 422,
+            "message": "Invalid token",
+            "data": {
+                "error": f"This token is invalid",
+            },
+        }
+        return response, 422
+    
+    
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload ):
+        response = {
+            "status": 400,
+            "message": "Expired token",
+            "data": {
+                "error": "This token has expired",
+            },
+        }
+        return response, 400
+    
     
     # initialize the db 
     db.init_app(app)

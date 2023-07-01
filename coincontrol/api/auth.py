@@ -3,7 +3,7 @@ from flask_restful import Api, Resource
 from .decorators import monitor
 from flask import Blueprint, request
 from flask_jwt_extended import create_access_token, create_refresh_token , jwt_required, get_jwt, get_jwt_identity
-from coincontrol.forms import RegistrationForm
+from coincontrol.forms import RegistrationForm, LoginForm
 from coincontrol.models import Users
 from coincontrol.extensions import db, bcrypt
 
@@ -19,53 +19,68 @@ class Register(Resource):
     @monitor
     def post(self):
         # app login written here
-        user_data = request.get_json()
-        username = user_data["username"]
-        email = user_data["email"]
-        password = user_data["password"]
-        confirm_password = user_data["confirm_password"]
+        
+        try:
+            user_data = request.get_json()
+            username = user_data.get("username")
+            email = user_data.get("email")
+            password = user_data.get("password")
+            confirm_password = user_data.get("confirm_password")
 
-        form = RegistrationForm()
+            form = RegistrationForm()
 
-        if form.validate():
-            form.username.data = username
-            form.email.data = email
-            form.password.data = password
-            form.confirm_password.data = confirm_password
+            if form.validate():
+                form.username.data = username
+                form.email.data = email
+                form.password.data = password
+                form.confirm_password.data = confirm_password
 
-            username = form.username.data
-            email = form.email.data
-            password = form.password.data
-            confirm_password = form.confirm_password.data
+                username = form.username.data
+                email = form.email.data
+                password = form.password.data
+                confirm_password = form.confirm_password.data
 
-            user = Users(username=username, email=email, password=password)
-            user.generate_password_hash(password)
-            db.session.add(user)
-            db.session.commit()
+                user = Users(username=username, email=email, password=password)
+                user.generate_password_hash(password)
+                db.session.add(user)
+                db.session.commit()
 
-            response = {
-                "status": 201,
-                "message": "User created sucessfully",
-                "data": {
-                    "status": "success",
-                    "username": username, 
-                    "email": email
+                response = {
+                    "status": 201,
+                    "message": "User created sucessfully",
+                    "data": {
+                        "status": "success",
+                        "username": username, 
+                        "email": email
+                    }
                 }
-            }
 
-            return response, 201
-        else:
+                return response, 201
+            else:
+                response = {
+                    "status": 400,
+                    "message": "User not created",
+                    "data": {
+                        "status": "failed",
+                        "error": form.errors,
+                    },
+                }
+
+                return response, 400
+
+            
+        except Exception as e:
             response = {
-                "status": 400,
-                "message": "User not created",
+            "status": 500,
+            "message": "Internal server error",
                 "data": {
-                    "status": "failed",
-                    "error": form.errors,
+                "status": "failed",
+                "error": str(e)
                 },
             }
-
-            return response, 400
-
+            
+            return response, 500
+        
 
 api.add_resource(Register, "/register")
 
@@ -74,52 +89,74 @@ class Login(Resource):
     @monitor
     def post(self):
         # app login written here
-        user_data = request.get_json()
-        email = user_data["email"]
-        password = user_data["password"]
+        try:
+            user_data = request.get_json()
+            email = user_data.get("email")
+            password = user_data.get("password")
 
-        user = Users.query.filter_by(email=email).first()
+            form = LoginForm()
+            
+            if form.validate():
+                form.email.data = email
+                form.password.data = password
+                
+                email = form.email.data 
+                password = form.password.data
 
-        if not user:
-            response = {
-                "status": 400,
-                "message": "This user does not exist",
-                "data": {
-                    "status": "failed",
-                    "error": "Invalid credentials"
+            
+                user = Users.query.filter_by(email=email).first()
+
+                if not user:
+                    response = {
+                        "status": 404,
+                        "message": "This user does not exist",
+                        "data": {
+                            "status": "failed",
+                            "error": "Invalid credentials"
+                        }
+                    }
+                    return response, 404
+
+                if not bcrypt.check_password_hash(user.password, password):
+                    response = {
+                        "status": 401,
+                        "message": "Invalid password for this account, password might be case sensitive",
+                        "data": {
+                            "status": "failed",
+                            "error": "Invalid credentials"
+                        },
+                    }
+                    return response, 401
+                
+                access_token = create_access_token(identity=email)
+                refresh_token = create_refresh_token(identity=email)
+
+                response = {
+                    "status": 200,
+                    "message": "Logged in successfully",
+                    "data": {
+                        "status": "success",
+                        "username": user.username,
+                        "email": user.email,
+                        "access_token": access_token,
+                        "refresh_token": refresh_token,
+                    },
                 }
-            }
-            return response, 400
+                
+            
+                return response, 200
 
-        if not bcrypt.check_password_hash(user.password, password):
+        except Exception as e:
             response = {
-                "status": 401,
-                "message": "Invalid password for this account, password might be case sensitive",
+            "status": 500,
+            "message": "Internal server error",
                 "data": {
-                    "status": "failed",
-                    "error": "Invalid credentials"
+                "status": "failed",
+                "error": str(e)
                 },
             }
-            return response, 401
-        
-        access_token = create_access_token(identity=email)
-        refresh_token = create_refresh_token(identity=email)
-
-        response = {
-            "status": 200,
-            "message": "Logged in successfully",
-            "data": {
-                "status": "success",
-                "username": user.username,
-                "email": user.email,
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            },
-        }
-        
-    
-        return response, 200
-
+            
+            return response, 500
 
 api.add_resource(Login, "/login")
 

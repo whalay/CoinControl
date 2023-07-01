@@ -238,7 +238,7 @@ class TestLogin(unittest.TestCase):
         
         tester = self.client
         response = tester.post("/api/v1/login", json={'email': 'test1@test.com', 'password': password})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
       # Tests that an invalid password returns status code 401
     def test_invalid_password(self):
@@ -255,3 +255,84 @@ class TestLogin(unittest.TestCase):
         response = tester.post("/api/v1/login", json={'email': email, 'password': 'invalid'})
         self.assertEqual(response.status_code, 401)
 
+"""
+Code Analysis
+
+Main functionalities:
+The LoginOut class is responsible for handling the logout functionality of the application. It uses the Flask-JWT-Extended library to ensure that the user is authenticated before logging out. Once the user is authenticated, the JWT token is added to the blacklist to prevent it from being used again. The class returns a response indicating that the user has been logged out successfully.
+
+Methods:
+- post(): This method is responsible for handling the HTTP POST request for logging out. It first checks if the user is authenticated using the @jwt_required decorator. If the user is authenticated, the JWT token is retrieved and added to the blacklist. Finally, a response is returned indicating that the user has been logged out successfully.
+
+Fields:
+- None.
+"""
+class TestLoginOut(unittest.TestCase):
+    def create_app(self):
+        app = create_app(config_name="testing")
+        return app
+
+    def setUp(self):
+        self.app = self.create_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client(use_cookies=True)
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+        
+    # Tests that a user can successfully logout with a valid JWT token
+    def test_successful_logout(self):
+        username = 'test'
+        email = 'test@test.com'
+        password = 'Test2@'
+        
+        # create a user
+        user = Users(username=username, email=email, password=password)
+        user.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        # tester client
+        tester = self.client
+        
+        # login the user
+        response = tester.post("/api/v1/login", json={'email': email, 'password': password})
+        res = response.json
+        access_token = res["data"]["access_token"]
+       
+        # logout the user
+        response = tester.post('/api/v1/logout', headers={'Authorization': f'Bearer {access_token}'})
+        res = response.json
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res['status'], 200)
+        self.assertEqual(res['message'], 'You have been logged Out successfully')
+        
+        
+    # Tests that a user cannot logout with an invalid JWT token
+    def test_invalid_logout(self):
+        username = 'test'
+        email = 'test@test.com'
+        password = 'Test2@'
+        
+        # create a user
+        user = Users(username=username, email=email, password=password)
+        user.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        # tester client
+        tester = self.client
+        
+        # login the user
+        response = tester.post("/api/v1/login", json={'email': email, 'password': password})
+        res = response.json
+        access_token = res["data"]["access_token"]
+       
+        # logout the user with an invalid token
+        response = tester.post('/api/v1/logout', headers={'Authorization': f'Bearer {access_token} invalid'})
+        res = response.json
+        self.assertEqual(response.status_code, 422)
