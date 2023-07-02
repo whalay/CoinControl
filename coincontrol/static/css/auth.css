@@ -266,18 +266,33 @@ input[type="submit"]:hover{
 .au{
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1270' height='720' preserveAspectRatio='none' viewBox='0 0 1270 720'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1224%26quot%3b)' fill='none'%3e%3cpath d='M824.3884958938299-74.31695084138595L734.2901784146218 36.94520522228048 845.5523344782882 127.04352270148858 935.6506519574964 15.78136663782216z' fill='rgba(217%2c 217%2c 217%2c 0.2784313725490196)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M-129.64 253.81 a238.29 238.29 0 1 0 476.58 0 a238.29 238.29 0 1 0 -476.58 0z' fill='rgba(217%2c 217%2c 217%2c 0.2784313725490196)' class='triangle-float3'%3e%3c/path%3e%3cpath d='M1253.2782883509726-33.11161483458062L1187.251057727674 54.50947965000438 1274.872152212259 120.53671027330302 1340.8993828355576 32.915615788718014z' fill='rgba(217%2c 217%2c 217%2c 0.2784313725490196)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M408.7143449464023 461.049537626231L430.8793699082328 303.33719011693256 273.16702239893436 281.1721651551021 251.0019974371039 438.8845126644005z' fill='rgba(217%2c 217%2c 217%2c 0.2784313725490196)' class='triangle-float3'%3e%3c/path%3e%3cpath d='M586.8056891666702 189.7037847834127L586.8056891666702 61.5617405241986 458.66364490745605 61.561740524198626 458.66364490745605 189.70378478341271z' fill='rgba(217%2c 217%2c 217%2c 0.2784313725490196)' class='triangle-float3'%3e%3c/path%3e%3cpath d='M599.2515366067175 33.77283357873067L442.91599283193887 100.1333347895585 509.27649404276667 256.4688785643372 665.6120378175453 190.10837735350935z' fill='rgba(217%2c 217%2c 217%2c 0.2784313725490196)' class='triangle-float2'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1224'%3e%3crect width='1270' height='720' fill='white'%3e%3c/rect%3e%3c/mask%3e%3cstyle%3e %40keyframes float1 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(-10px%2c 0)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float1 %7b animation: float1 5s infinite%3b %7d %40keyframes float2 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(-5px%2c -5px)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float2 %7b animation: float2 4s infinite%3b %7d %40keyframes float3 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(0%2c -10px)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float3 %7b animation: float3 6s infinite%3b %7d %3c/style%3e%3c/defs%3e%3c/svg%3e");
 }
-
 .success{
+    width: 100%;
+    transition: all .10s ease-in-out;
+}
+
+.success-alert{
     padding: 10px;
     width: 100%;
     background-color: #4fc069;
     border-radius: 10px;
-
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-.success li{
-    font-size: 0.9rem;
+
+.success-alert p{
+    font-size: 0.8rem;
     color: var(--bg-color);
     text-align: center;
+}
+
+.success.close{
+    display: none;
+}
+
+.collapse-button{
+   color: var(--bg-color);
 }
 .errors li{
     margin-top: 5px;

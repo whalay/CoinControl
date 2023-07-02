@@ -1,5 +1,7 @@
 from flask import render_template
 from flask import Blueprint
+from flask_login import login_required
+
 
 main = Blueprint("main", __name__, template_folder='templates', static_folder='static')
 
@@ -8,23 +10,28 @@ def home():
     return render_template('home.html')
 
 @main.route('/dashboard', methods=["GET"])
+@login_required
 def dashboard():
     pass
 
 # Expenses management route
 @main.route('/expenses', methods=["GET","POST"])
+@login_required
 def expenses():
     pass
 
 @main.route('/expenses/<int:id>', methods=["GET"])
+@login_required
 def get_expenses():
     pass
 
 @main.route('/expenses/<int:id>', methods=["POST"])
+@login_required
 def update_expenses():
     pass
 
 @main.route('/expenses/<int:id>', methods=["POST"])
+@login_required
 def delete_expenses():
     pass
 
@@ -32,18 +39,22 @@ def delete_expenses():
 
 # Income management route
 @main.route('/income', methods=["GET","POST"])
+@login_required
 def income():
     pass
 
 @main.route('/income/<int:id>', methods=["GET"])
+@login_required
 def get_income():
     pass
 
 @main.route('/income/<int:id>', methods=["POST"])
+@login_required
 def update_income():
     pass
 
 @main.route('/income/<int:id>', methods=["POST"])
+@login_required
 def delete_income():
     pass
 
@@ -51,18 +62,22 @@ def delete_income():
 
 # Budgets management route
 @main.route('/budgets', methods=["GET","POST"])
+@login_required
 def budgets():
     pass
 
 @main.route('/budgets/<int:id>', methods=["GET"])
+@login_required
 def get_budgets():
     pass
 
 @main.route('/budgets/<int:id>', methods=["POST"])
+@login_required
 def update_budgets():
     pass
 
 @main.route('/budgets/<int:id>', methods=["POST"])
+@login_required
 def delete_budgets():
     pass
 
@@ -70,14 +85,17 @@ def delete_budgets():
 
 # Report and Analytics management route
 @main.route('/reports/expenses', methods=["GET"])
+@login_required
 def reports_expenses():
     pass
 
 @main.route('/reports/income', methods=["GET"])
+@login_required
 def reports_income():
     pass
 
 @main.route('/reports/budgets', methods=["GET"])
+@login_required
 def reports_budgets():
     pass
 # ---------------------------------------------------------------------------------------
@@ -85,5 +103,6 @@ def reports_budgets():
 
 # Account Settings and security route
 @main.route('/profile', methods=["GET", "POST"])
+@login_required
 def profile():
     pass

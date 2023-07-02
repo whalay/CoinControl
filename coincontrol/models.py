@@ -1,6 +1,7 @@
 from coincontrol.extensions import db
 from datetime import datetime
 from coincontrol.extensions import bcrypt
+from flask_login import UserMixin
 
 
 class Users(db.Model):

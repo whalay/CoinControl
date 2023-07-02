@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_wtf import CSRFProtect 
 from flask_jwt_extended import JWTManager
+from flask_login import LoginManager
 from coincontrol.config import config
 from coincontrol.auth import auth
 from coincontrol.main import main
@@ -9,7 +10,10 @@ from coincontrol.api.auth import api_auth
 from coincontrol.api.main import api_main
 from coincontrol.auth import auth
 from coincontrol.main import main
+from coincontrol.models import Users
 from datetime import timedelta
+
+
 
 
 def create_app(config_name='development'):
@@ -74,6 +78,18 @@ def create_app(config_name='development'):
         }
         return response, 400
     
+    # flask login manager
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        user = Users.query.get(user_id)
+        
+        if user:
+            return user
+        else:
+            return None
     
     
     # initialize the db 
