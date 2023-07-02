@@ -1,5 +1,6 @@
 from flask import render_template, request, jsonify
 from coincontrol.main import main
+from flask_wtf.csrf import CSRFError
 
 @main.app_errorhandler(404)
 def page_not_found(e):
@@ -22,3 +23,9 @@ def forbidden(message):
     response = jsonify({'error': 'forbidden', 'message': message})
     response.status_code = 403
     return response
+
+
+
+@main.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return render_template('csrf_error.html', reason=e.description), 400

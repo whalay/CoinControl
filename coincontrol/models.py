@@ -13,6 +13,7 @@ class Users(db.Model):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     date_verified = db.Column(db.DateTime, index=True)
+    
 
     def generate_password_hash(self, password):
         self.password = bcrypt.generate_password_hash(password, 10)

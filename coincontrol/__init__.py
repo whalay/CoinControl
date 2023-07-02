@@ -27,11 +27,11 @@ def create_app(config_name='development'):
     
     # initialize csrf for flask forms
     CSRFProtect(app)
-    app.config['WTF_CSRF_ENABLED'] = False
+    # app.config['WTF_CSRF_ENABLED'] = False
    
     # initialize jwt
     jwt = JWTManager(app)
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=4)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=1)
     
     from coincontrol.api.blacklist import BLACKLIST
@@ -73,6 +73,7 @@ def create_app(config_name='development'):
             },
         }
         return response, 400
+    
     
     
     # initialize the db 

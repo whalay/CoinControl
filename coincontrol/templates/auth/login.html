@@ -3,8 +3,18 @@
 <!--Sign in section -->
 {% block content %}
     <section class="auth">
+        <ul class="success">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                {% else %}
+                    <li>No messages to display</li>
+                {% endif %}
+            {% endwith %}
+        </ul>
         <div class="container">
-
             <div class="box-01">
                 <a href="{{ url_for('main.home') }}" class="logo"><img src="{{ url_for('static', filename='img/coincontrol.png') }}" alt="coincontrol-logo"></a>
                 <img src="{{ url_for('static', filename='img/signin-bg.png') }}" alt="signin-bg"> 

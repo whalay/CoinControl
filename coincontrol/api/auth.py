@@ -6,6 +6,9 @@ from flask_jwt_extended import create_access_token, create_refresh_token , jwt_r
 from coincontrol.forms import RegistrationForm, LoginForm
 from coincontrol.models import Users
 from coincontrol.extensions import db, bcrypt
+from coincontrol.api.blacklist import BLACKLIST
+from http import HTTPStatus
+
 
 api_auth = Blueprint("api_auth", __name__)
 api = Api(api_auth, prefix="/api/v1")
@@ -169,12 +172,8 @@ class LoginOut(Resource):
     def post(self):
         # app login written here
         jwt_token = get_jwt()["jti"]
-        print(jwt_token)
-     
-        from coincontrol.api.blacklist import BLACKLIST
         BLACKLIST.add(jwt_token)
-        print(BLACKLIST)
-        
+    
         response = {
         "status": 200,
         "message": "You have been logged Out successfully",

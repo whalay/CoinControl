@@ -13,34 +13,64 @@
                 <div class="form-bx">
                     <h2>Create an account</h2>
                     <p>Welcome to the future of secure finance management</p>
-                    <form action="" method="post">
+                    <form action="{{url_for('auth.register')}}" method="POST">
+                        {{ form.hidden_tag()}}
                         <div class="form-flex">
+                          
+
                             <div class="input-bx">
-                                <label for="name">Name</label>
-                                <input type="name" name="name" id="name" placeholder="username">
+                                {{ form.username.label}}
+                                {{ form.username(placeholder="username")}}
                                 <i class='bx bx-envelope'></i>
+                                {% if form.username.errors %}
+                                    <ul class="errors">
+                                    {% for error in form.username.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </div>
     
                             <div class="input-bx">
-                                <label for="email">Email</label>
-                                <input type="email" name="email" id="email" placeholder="you@coincontrol.com">
+                                {{ form.email.label}}
+                                {{ form.email(placeholder="you@coincontrol.com")}}
                                 <i class='bx bx-envelope'></i>
+                                {% if form.email.errors %}
+                                    <ul class="errors">
+                                    {% for error in form.email.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </div>
                         </div>
 
                          <div class="input-bx">
-                            <label for="password">Password</label>
-                            <input type="password" name="pass" id="pass" placeholder="At least 8 characters">
-                            <i class='bx bx-lock-alt'></i>
+                                {{ form.password.label}}
+                                {{ form.password(placeholder="At least 8 characters")}}
+                                <i class='bx bx-lock-alt'></i>
+                                {% if form.password.errors %}
+                                    <ul class="errors">
+                                    {% for error in form.password.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
                         </div>
 
                         <div class="input-bx">
-                            <label for="confirm_password">Confirm password</label>
-                            <input type="password" name="pass" id="pass" placeholder="At least 8 characters">
-                            <i class='bx bx-lock-alt'></i>
+                                {{ form.confirm_password.label}}
+                                {{ form.confirm_password(placeholder="At least 8 characters")}}
+                                <i class='bx bx-lock-alt'></i>
+                                {% if form.confirm_password.errors %}
+                                    <ul class="errors">
+                                    {% for error in form.confirm_password.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
                         </div>
-
-                        <input type="submit" value="Sign up">
+                        {{ form.submit}}
                     </form>
 
                     <div class="line-bx">
