@@ -41,11 +41,13 @@ def login():
         user = Users.query.filter_by(email=email).first()
         user_password = user.password
         password_check = bcrypt.check_password_hash(user_password, password)
-        if user and password_check:
+     
+            
+        if user is not None and password_check:
             login_user(user)
             flash('logged in successfully')
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for("main.home"))
+            return redirect(next_page) if next_page else redirect(url_for("main.dashboard"))
         else:
             flash("Login Unsuccessful. Please check username and password")
 
@@ -55,7 +57,8 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return  redirect(url_for("main.home"))
+    flash('You have been logged out.')
+    return  redirect(url_for("auth.login"))
 
 
 

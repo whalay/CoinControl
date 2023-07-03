@@ -80,6 +80,8 @@ def create_app(config_name='development'):
     
     # flask login manager
     login_manager = LoginManager()
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message ='Opps only admin users are authorized to access this page'
     login_manager.init_app(app)
     
     @login_manager.user_loader

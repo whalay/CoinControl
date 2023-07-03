@@ -12,7 +12,7 @@ def home():
 @main.route('/dashboard', methods=["GET"])
 @login_required
 def dashboard():
-    pass
+    return render_template('dashboard/dashboard.html')
 
 # Expenses management route
 @main.route('/expenses', methods=["GET","POST"])

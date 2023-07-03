@@ -1,0 +1,12 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+Hello,
+{% if current_user.is_authenticated %}
+ {{ current_user.username }}
+{% else %}
+ Stranger
+{% endif %}
+
+<a href="{{ url_for('auth.logout') }}">logout</a> 
+{% endblock %}
