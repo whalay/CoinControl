@@ -37,7 +37,7 @@
                     <h2>Welcome back!</h2>
                     <p>Start managing your finance faster and better.</p>
                     <form action="{{ url_for('auth.login') }}" method="POST"> 
-                        {{ form.hidden_tag()}}
+                        {{ form.hidden_tag() }}
                         <div class="input-bx">
                             {{ form.email.label}}
                             {{ form.email(placeholder="you@coincontrol.com")}}
@@ -62,10 +62,16 @@
                                 {% endfor %}
                                 </ul>
                             {% endif %}
-
                         </div>
+                       <div class="form-bottom">
+                            <span class="remember">
+                                {{ form.remember }}
+                                {{ form.remember.label }}
+                            </span>
 
-                        <a href="#">Forgot password?</a>
+                            <a href="#">Forgot password?</a>
+                       </div>
+                        
                         {{ form.submit}}
                     </form>
 

@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, session
 from flask import request, render_template, redirect, url_for, flash
 from coincontrol.forms import RegistrationForm, LoginForm
 from coincontrol.extensions import bcrypt
@@ -7,6 +7,8 @@ from coincontrol.extensions import db
 from flask_login import login_required, login_user, logout_user, current_user
 
 auth = Blueprint("auth", __name__, template_folder='templates', static_folder='static')
+
+
 
 @auth.route('/register', methods=["GET", "POST"])
 def register():
@@ -32,19 +34,19 @@ def register():
 
 @auth.route('/login', methods=["GET", "POST"])
 def login():
+    
     form = LoginForm()
-
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
-        
+        remember = form.remember.data
+       
         user = Users.query.filter_by(email=email).first()
         user_password = user.password
         password_check = bcrypt.check_password_hash(user_password, password)
-     
             
         if user is not None and password_check:
-            login_user(user)
+            login_user(user, remember=remember)
             flash('logged in successfully')
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for("main.dashboard"))

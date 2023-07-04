@@ -1,7 +1,7 @@
-from flask import Flask
+from flask import Flask, redirect, url_for, flash, render_template, request
 from flask_wtf import CSRFProtect 
 from flask_jwt_extended import JWTManager
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from coincontrol.config import config
 from coincontrol.auth import auth
 from coincontrol.main import main
@@ -12,6 +12,8 @@ from coincontrol.auth import auth
 from coincontrol.main import main
 from coincontrol.models import Users
 from datetime import timedelta
+from coincontrol.api.blacklist import BLACKLIST
+
 
 
 
@@ -31,14 +33,12 @@ def create_app(config_name='development'):
     
     # initialize csrf for flask forms
     CSRFProtect(app)
-    # app.config['WTF_CSRF_ENABLED'] = False
    
     # initialize jwt
     jwt = JWTManager(app)
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=1)
     
-    from coincontrol.api.blacklist import BLACKLIST
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blocklist(jwt_header, jwt_payload):
 
@@ -81,8 +81,13 @@ def create_app(config_name='development'):
     # flask login manager
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
-    login_manager.login_message ='Opps only admin users are authorized to access this page'
+    # login_manager.login_message ='Opps only admin users are authorized to access this page'
     login_manager.init_app(app)
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
+    app.config["REMEMBER_COOKIE_DURATION"] = timedelta(hours=1)
+  
+
+    
     
     @login_manager.user_loader
     def load_user(user_id):
@@ -93,9 +98,22 @@ def create_app(config_name='development'):
         else:
             return None
     
-    
+    @login_manager.unauthorized_handler
+    def unauthorized_user():
+        if current_user.is_authenticated:
+            return render_template('dashboard/dashboard.html')
+        else:
+            if request.path == '/admin':
+                login_manager.login_message = 'Opps only admin users are authorized to access this page'
+            else:
+                login_manager.login_message = 'Please log in to access this page.'
+
+            return redirect(url_for('auth.login'))
+     
     # initialize the db 
     db.init_app(app)
     
+
+        
     return app
 

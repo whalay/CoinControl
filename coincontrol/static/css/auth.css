@@ -156,7 +156,6 @@ img{
 }
 
 .form-bx form a{
-    padding-bottom: 10px;
     color: var(--s-light-color);
     transition: all .36s ease;
     display: inline-flex;
@@ -169,7 +168,24 @@ img{
 .form-bx form a:hover{
     color: var(--s-bold-color);
 }
+.form-bottom{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+}
+.remember{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
 
+.remember label{
+    font-size: 0.8rem;
+    text-transform: capitalize;
+    color: var(--s-bold-color);
+}
 input[type="submit"]{
     padding: 10px;
     border-radius: 10px;

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import (
     DataRequired,
     Length,
@@ -28,7 +28,7 @@ class RegistrationForm(FlaskForm):
         "Password",
         validators=[
             DataRequired(),
-            EqualTo("confirm_password"),
+            EqualTo("confirm_password", message="Password must match confirm password"),
             Length(min=5, max=50, message="Password is too short"),
             Regexp(
                 "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\#])[A-Za-z\d@$!%*?&\#]+$",
@@ -36,7 +36,7 @@ class RegistrationForm(FlaskForm):
             ),
         ],
     )
-    confirm_password = PasswordField("Confirm Password", validators=[DataRequired()])
+    confirm_password = PasswordField("Confirm Password", validators=[DataRequired() ])
     submit = SubmitField('Sign up')
     
 
@@ -61,6 +61,7 @@ class LoginForm(FlaskForm):
         ],
     )
     password = PasswordField("Password", validators=[DataRequired()])
+    remember = BooleanField("Remember Me")
     submit = SubmitField('Login')
 
 
