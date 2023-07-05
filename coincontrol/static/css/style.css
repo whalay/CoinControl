@@ -148,7 +148,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 100px 5% 50px 5%;
+    padding: 140px 5% 50px 5%;
     min-height: 100vh;
 }
 
@@ -364,6 +364,39 @@ section {
 }
 
 /* cta section end */
+
+/* alert */
+.success{
+    width: 100%;
+    padding: 0 5%;
+    transition: all .10s ease-in-out;
+}
+
+.success-alert{
+    padding: 5px 10px;
+    width: 100%;
+    background-color: #4fc069;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.success-alert p{
+    font-size: 0.8rem;
+    color: var(--bg-color);
+    text-align: center;
+}
+.s-alert{
+    position: absolute;
+    top: 100px;
+    z-index: 1;
+}
+
+.collapse-button{
+   color: var(--bg-color);
+}
+
 
 /* footer start */
 footer {

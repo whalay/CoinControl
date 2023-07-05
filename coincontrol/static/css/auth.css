@@ -284,11 +284,12 @@ input[type="submit"]:hover{
 }
 .success{
     width: 100%;
+    padding: 0 5%;
     transition: all .10s ease-in-out;
 }
 
 .success-alert{
-    padding: 10px;
+    padding: 5px;
     width: 100%;
     background-color: #4fc069;
     border-radius: 10px;
@@ -301,10 +302,6 @@ input[type="submit"]:hover{
     font-size: 0.8rem;
     color: var(--bg-color);
     text-align: center;
-}
-
-.success.close{
-    display: none;
 }
 
 .collapse-button{

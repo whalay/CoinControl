@@ -4,6 +4,7 @@ from coincontrol.extensions import bcrypt
 from flask_login import UserMixin
 
 
+
 class Users(UserMixin, db.Model):
     __tablename__ = "users"
     user_id = db.Column(db.Integer, primary_key=True)
@@ -16,11 +17,13 @@ class Users(UserMixin, db.Model):
     date_verified = db.Column(db.DateTime, index=True)
     
 
+
     def generate_password_hash(self, password):
         self.password = bcrypt.generate_password_hash(password, 10)
-
+        
     def is_verified(self, token):
         self.verified = True
+        
 
     def get_id(self):
         try:

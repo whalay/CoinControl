@@ -103,11 +103,11 @@ def create_app(config_name='development'):
         if current_user.is_authenticated:
             return render_template('dashboard/dashboard.html')
         else:
-            if request.path == '/admin':
-                login_manager.login_message = 'Opps only admin users are authorized to access this page'
+            if request.endpoint == 'auth.admin':
+                flash('Opps only admin users are authorized to access this page')
             else:
-                login_manager.login_message = 'Please log in to access this page.'
-
+                flash('Please log in to access this page.'
+)
             return redirect(url_for('auth.login'))
      
     # initialize the db 
