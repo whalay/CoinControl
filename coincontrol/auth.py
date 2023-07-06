@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import request, render_template, redirect, url_for, flash
-from coincontrol.forms import RegistrationForm, LoginForm, PasswordresetForm, EmailForm
+from coincontrol.forms import RegistrationForm, LoginForm, ResetPasswordForm, EmailForm
 from coincontrol.extensions import bcrypt
 from coincontrol.models import Users
 from coincontrol.extensions import db
@@ -8,7 +8,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 from coincontrol.token import generate_confirmation_token, check_confirm_token
 from datetime import datetime
 from coincontrol.email import send_email
-from itsdangerous import SignatureExpired
+from itsdangerous import SignatureExpired, BadSignature
 from coincontrol.decorators import check_confirmed
 
 auth = Blueprint("auth", __name__, template_folder="templates", static_folder="static")
@@ -38,12 +38,19 @@ def register():
         html = f"""\
             <html>
             <body>
-                <p>Hi,<br>
-                How are you?<br>
-                <p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p><br>
-                <p><a href="{ confirm_url }">{ confirm_url }</a></p>
+                <h3>Dear {user.username},</h3><br>
+                <p>Thank you for registering with CoinControl. To complete the registration process and activate your account, 
+                we kindly ask you to confirm your email address by clicking on the link below:</p><br>
+                <p><a href="{ confirm_url }">{ confirm_url }</a></p><br>
+                <p>By clicking on the link, you will be directed to a confirmation page where you can verify your email address. 
+                Please ensure that you complete this step to gain full access to our services.</p><br>
+                <p>If you did not initiate this registration or believe this email was sent to you in error, please disregard it.</p><br>
+                <p>If you have any questions or need further assistance, please do not hesitate to contact our support team at <a href="mailto:support@coincontrol.com">support@coincontrol.com</a>.</p><br>
+                <p>Thank you for choosing Coincontrol. We look forward to serving you.</p><br>
+                <p>Best regards,<br>
+                Coincontrol Team.
                 </p>
-            </body>
+                </body>
             </html>
             """
 
@@ -82,7 +89,7 @@ def confirm_token(token):
         user.date_verified = datetime.now()
         db.session.add(user)
         db.session.commit()
-        flash("You have verified your account. Thanks!")
+        flash("You have verified your account, you can now login to your dashboard. Thanks!")
     return redirect(url_for("main.home"))
 
 
@@ -96,16 +103,23 @@ def resend_confirmation():
         Thank you for registering with CoinControl
         """
     html = f"""\
-        <html>
-        <body>
-            <p>Hi,<br>
-            How are you?<br>
-            <p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p><br>
-            <p><a href="{ confirm_url }">{ confirm_url }</a></p>
-            </p>
-        </body>
-        </html>
-        """
+            <html>
+            <body>
+                <h3>Dear {current_user.username},</h3><br>
+                <p>Thank you for registering with CoinControl. To complete the registration process and activate your account, 
+                we kindly ask you to confirm your email address by clicking on the link below:</p><br>
+                <p><a href="{ confirm_url }">{ confirm_url }</a></p><br>
+                <p>By clicking on the link, you will be directed to a confirmation page where you can verify your email address. 
+                Please ensure that you complete this step to gain full access to our services.</p><br>
+                <p>If you did not initiate this registration or believe this email was sent to you in error, please disregard it.</p><br>
+                <p>If you have any questions or need further assistance, please do not hesitate to contact our support team at <a href="mailto:support@coincontrol.com">support@coincontrol.com</a>.</p><br>
+                <p>Thank you for choosing Coincontrol. We look forward to serving you.</p><br>
+                <p>Best regards,<br>
+                Coincontrol Team.
+                </p>
+                </body>
+            </html>
+            """
 
     send_email(current_user.email, subject, text, html)
     flash("A new confirmation email has been sent.")
@@ -142,16 +156,12 @@ def login():
 @auth.route("/forgotpassword", methods=["GET", "POST"])
 def forgotpassword():
     form = EmailForm()
-
     if form.validate_on_submit():
         # verify if user exists
         user = Users.query.filter_by(email=form.email.data).first()
-        print(user)
-        email = form.email.data
-        print(email)
-        # user = Users.query.filter_by(email=email).first()
-
-        token = generate_confirmation_token(email)
+        form_email = form.email.data
+        
+        token = generate_confirmation_token(form_email)
         confirm_url = url_for("auth.confirmpassword", token=token, _external=True)
         subject = "CoinControl Account Recovery"
         text = """\
@@ -167,39 +177,40 @@ def forgotpassword():
                 <p><a href="{ confirm_url }">{ confirm_url }</a></p><br>
                 <p>If you have any questions or need further assistance, please do not hesitate to contact our support team at <a href="mailto:support@coincontrol.com">support@coincontrol.com</a>.</p><br>
                 <p>Thank you for your patience and cooperation.</p><br>
-                <p>Best regards,</p><br>
-                <p>Coincontrol Team.</p><br>
+                <p>Best regards,<br>
+                Coincontrol Team.
+                </p>
                 </body>
             </html>
             """
 
-        send_email(email, subject, text, html)
-        flash(f"We just emailed {user.email} with instructions to reset your password")
+        send_email(form_email, subject, text, html)
+        flash(f"We just emailed {form_email} with instructions to reset your password")
         return redirect(url_for("auth.login"))
     return render_template("auth/forgotpassword.html", form=form)
 
 
 @auth.route("/confirmpassword/<token>", methods=["GET", "POST"])
-@login_required
 def confirmpassword(token):
     try:
         email = check_confirm_token(token)
     except SignatureExpired:
-        flash("The password reset link is invalid or has expired.")
+        flash("The password reset link has expired.")
         return redirect(url_for("auth.login"))
-    print(email)
-    form = PasswordresetForm()
-    password = form.password.data
-    user = Users.query.filter_by(email=email).first()
-    if user:
-        print(user)        
+    except BadSignature:
+        flash("The password reset link is invalid ")
+        return redirect(url_for("auth.login"))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        password = form.password.data
+        user = Users.query.filter_by(email=email).first()
         user.generate_password_hash(password)
-        db.session.add(user)
         db.session.commit()
         flash("Your password has been updated successfully")
         return redirect(url_for("auth.login"))
-    return render_template("auth/confirmpassword.html", token=token , form=form)
 
+    return render_template("auth/confirmpassword.html", form=form, token=token)
 
 @auth.route("/logout", methods=["GET", "POST"])
 @login_required

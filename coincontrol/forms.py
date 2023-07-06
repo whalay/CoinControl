@@ -36,9 +36,8 @@ class RegistrationForm(FlaskForm):
             ),
         ],
     )
-    confirm_password = PasswordField("Confirm Password", validators=[DataRequired() ])
-    submit = SubmitField('Sign up')
-    
+    confirm_password = PasswordField("Confirm Password", validators=[DataRequired()])
+    submit = SubmitField("Sign up")
 
     def validate_username(self, username):
         user = Users.query.filter_by(username=username.data).first()
@@ -62,27 +61,10 @@ class LoginForm(FlaskForm):
     )
     password = PasswordField("Password", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
-    submit = SubmitField('Login')
+    submit = SubmitField("Login")
 
 
-class EmailForm(FlaskForm):
-    email = StringField('Email',validators=[DataRequired(), Email()])
-    submit = SubmitField('Reset password')
-
-    def validate_email(self, email):
-        user = Users.query.filter_by(email=email.data).first()
-        if user is None:
-            raise ValidationError('There is no account with that email. You must register first.')
-
-class PasswordresetForm(FlaskForm):
-    email = StringField(
-        "Email",
-        validators=[
-            DataRequired(),
-            Email(),
-            Length(min=6, max=35, message="Little short for an email address?"),
-        ],
-    )
+class ResetPasswordForm(FlaskForm):
     password = PasswordField(
         "Password",
         validators=[
@@ -90,17 +72,25 @@ class PasswordresetForm(FlaskForm):
             EqualTo("confirm_password", message="Password must match confirm password"),
             Length(min=5, max=50, message="Password is too short"),
             Regexp(
-               "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\#])[A-Za-z\d@$!%*?&\#]+$",
+                "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\#])[A-Za-z\d@$!%*?&\#]+$",
                 message="Password must include at least one uppercase letter, one lowercase letter, one number, and one special character",
             ),
         ],
     )
     confirm_password = PasswordField("Confirm Password", validators=[DataRequired()])
-    submit = SubmitField('Save')
-
+    submit = SubmitField("Reset password")
 
     def validate_email(self, email):
         user = Users.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError(
+                "There is no account with that email. You must register first."
+            )
+class EmailForm(FlaskForm):
+    email = StringField('Email',validators=[DataRequired(), Email()])
+    submit = SubmitField('Send')
 
-        if not user:
-            raise ValidationError("This user does not exit in this system")
+    def validate_email(self, email):
+        user = Users.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with that email. You must register first.')
