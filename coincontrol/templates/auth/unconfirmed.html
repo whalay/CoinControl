@@ -1,5 +1,5 @@
 {% extends 'auth/base.html' %}
-{% block title %}Verify account{% endblock %}
+{% block title %}Email confirmation{% endblock %}
 
 {% block content %}
     <section class="unconfirmed">
@@ -23,11 +23,11 @@
         </div>
         {% endfor %}
         <div class="container">
-            <h2>Welcome!</h2>
-            <p>You have not verified your account. Please check your inbox (and your spam folder)
-                - you should have received an email with a confirmation link
+            <h2>Email Confirmation</h2>
+            <p>We have sent email to {{ current_user.email }} to confirm the validity of your email address. After
+                receiveing the email follow the link provided to complete the registration.
             </p>
-            <p>Didnt get the email? <a href="{{ url_for('auth.resend_confirmation')}}">Resend</a></p>
+            <p>Didnt get the email? <a href="{{ url_for('auth.resend_confirmation')}}">Resend confirmation mail</a></p>
         </div>
     </section>
 {% endblock %}
