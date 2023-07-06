@@ -1,7 +1,8 @@
-{% extends 'dashboard/base.html' %}
-{% block title %}Dashboard{% endblock %}
+{% extends 'auth/base.html' %}
+{% block title %}Verify account{% endblock %}
+
 {% block content %}
-<section class="dashboard">
+    <section class="unconfirmed">
         {% for message in get_flashed_messages() %}
         <div class="success">
             <div class="success-alert" data-aos="fade-down" data-aos-delay="300">
@@ -22,17 +23,11 @@
         </div>
         {% endfor %}
         <div class="container">
-            <h1>Hello</h1>
+            <h2>Welcome!</h2>
+            <p>You have not verified your account. Please check your inbox (and your spam folder)
+                - you should have received an email with a confirmation link
+            </p>
+            <p>Didnt get the email? <a href="{{ url_for('auth.resend_confirmation')}}">Resend</a></p>
         </div>
-        {% if current_user.is_authenticated %}
-            {{ current_user.username }}
-        {% else %}
-        Stranger
-        {% endif %}
-        Hello,
-
-
-        <a href="{{ url_for('auth.logout') }}">logout</a> 
-</section>
-
+    </section>
 {% endblock %}

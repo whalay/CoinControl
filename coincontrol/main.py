@@ -1,8 +1,7 @@
-from flask import render_template
-from flask import Blueprint
-from flask_login import login_required
-
-
+from flask import render_template, redirect, url_for
+from flask import Blueprint, flash
+from flask_login import login_required, current_user
+from coincontrol.decorators import check_confirmed
 main = Blueprint("main", __name__, template_folder='templates', static_folder='static')
 
 @main.route('/', methods=["GET"])
@@ -11,7 +10,9 @@ def home():
 
 @main.route('/dashboard', methods=["GET"])
 @login_required
+@check_confirmed
 def dashboard():
+   
     return render_template('dashboard/dashboard.html')
 
 # Expenses management route
