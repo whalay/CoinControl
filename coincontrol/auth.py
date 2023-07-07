@@ -7,7 +7,11 @@ from coincontrol.extensions import db
 from flask_login import login_required, login_user, logout_user, current_user
 from coincontrol.token import generate_confirmation_token, check_confirm_token
 from datetime import datetime
-from coincontrol.email import send_email
+from coincontrol.email import (
+    send_confirm_email,
+    resend_confirm_email,
+    send_passwordreset_email,
+)
 from itsdangerous import SignatureExpired, BadSignature
 from coincontrol.decorators import check_confirmed
 
@@ -31,30 +35,10 @@ def register():
 
         token = generate_confirmation_token(user.email)
         confirm_url = url_for("auth.confirm_token", token=token, _external=True)
-        subject = "CoinControl Email Confirmation"
-        text = """\
-            Thank you for registering with CoinControl
-            """
-        html = f"""\
-            <html>
-            <body>
-                <h3>Dear {user.username},</h3><br>
-                <p>Thank you for registering with CoinControl. To complete the registration process and activate your account, 
-                we kindly ask you to confirm your email address by clicking on the link below:</p><br>
-                <p><a href="{ confirm_url }">{ confirm_url }</a></p><br>
-                <p>By clicking on the link, you will be directed to a confirmation page where you can verify your email address. 
-                Please ensure that you complete this step to gain full access to our services.</p><br>
-                <p>If you did not initiate this registration or believe this email was sent to you in error, please disregard it.</p><br>
-                <p>If you have any questions or need further assistance, please do not hesitate to contact our support team at <a href="mailto:support@coincontrol.com">support@coincontrol.com</a>.</p><br>
-                <p>Thank you for choosing Coincontrol. We look forward to serving you.</p><br>
-                <p>Best regards,<br>
-                Coincontrol Team.
-                </p>
-                </body>
-            </html>
-            """
 
-        send_email(email, subject, text, html)
+        send_confirm_email(
+            email_receiver=email, user=user.username, confirm_url=confirm_url
+        )
 
         login_user(user)
         flash("A confirmation email has been sent to your email address.")
@@ -77,7 +61,6 @@ def unconfirmed():
 def confirm_token(token):
     try:
         email = check_confirm_token(token)
-
     except SignatureExpired:
         flash("The confirmation link is invalid or has expired.")
         return redirect(url_for("main.home"))
@@ -89,7 +72,9 @@ def confirm_token(token):
         user.date_verified = datetime.now()
         db.session.add(user)
         db.session.commit()
-        flash("You have verified your account, you can now login to your dashboard. Thanks!")
+        flash(
+            "You have verified your email, you can now login to your dashboard. Thanks!"
+        )
     return redirect(url_for("main.home"))
 
 
@@ -98,30 +83,11 @@ def confirm_token(token):
 def resend_confirmation():
     token = generate_confirmation_token(current_user.email)
     confirm_url = url_for("auth.confirm_token", token=token, _external=True)
-    subject = "CoinControl Resend Email Confirmation"
-    text = """\
-        Thank you for registering with CoinControl
-        """
-    html = f"""\
-            <html>
-            <body>
-                <h3>Dear {current_user.username},</h3><br>
-                <p>Thank you for registering with CoinControl. To complete the registration process and activate your account, 
-                we kindly ask you to confirm your email address by clicking on the link below:</p><br>
-                <p><a href="{ confirm_url }">{ confirm_url }</a></p><br>
-                <p>By clicking on the link, you will be directed to a confirmation page where you can verify your email address. 
-                Please ensure that you complete this step to gain full access to our services.</p><br>
-                <p>If you did not initiate this registration or believe this email was sent to you in error, please disregard it.</p><br>
-                <p>If you have any questions or need further assistance, please do not hesitate to contact our support team at <a href="mailto:support@coincontrol.com">support@coincontrol.com</a>.</p><br>
-                <p>Thank you for choosing Coincontrol. We look forward to serving you.</p><br>
-                <p>Best regards,<br>
-                Coincontrol Team.
-                </p>
-                </body>
-            </html>
-            """
-
-    send_email(current_user.email, subject, text, html)
+    resend_confirm_email(
+        email_receiver=current_user.email,
+        user=current_user.username,
+        confirm_url=confirm_url,
+    )
     flash("A new confirmation email has been sent.")
     return redirect(url_for("auth.unconfirmed"))
 
@@ -160,31 +126,13 @@ def forgotpassword():
         # verify if user exists
         user = Users.query.filter_by(email=form.email.data).first()
         form_email = form.email.data
-        
+
         token = generate_confirmation_token(form_email)
         confirm_url = url_for("auth.confirmpassword", token=token, _external=True)
-        subject = "CoinControl Account Recovery"
-        text = """\
-            Follow the instructions bellow
-            """
-        html = f"""\
-            <html>
-            <body>
-                <h3>Dear {user.username}</h3><br>
-                <p>We have received your request for coin control recovery. 
-                We understand that you are experiencing issues accessing your coins and we are here to assist you. 
-                Please click the link below to initiate the recovery process</p><br>
-                <p><a href="{ confirm_url }">{ confirm_url }</a></p><br>
-                <p>If you have any questions or need further assistance, please do not hesitate to contact our support team at <a href="mailto:support@coincontrol.com">support@coincontrol.com</a>.</p><br>
-                <p>Thank you for your patience and cooperation.</p><br>
-                <p>Best regards,<br>
-                Coincontrol Team.
-                </p>
-                </body>
-            </html>
-            """
 
-        send_email(form_email, subject, text, html)
+        send_passwordreset_email(
+            email_receiver=form_email, user=user.username, confirm_url=confirm_url
+        )
         flash(f"We just emailed {form_email} with instructions to reset your password")
         return redirect(url_for("auth.login"))
     return render_template("auth/forgotpassword.html", form=form)
@@ -211,6 +159,7 @@ def confirmpassword(token):
         return redirect(url_for("auth.login"))
 
     return render_template("auth/confirmpassword.html", form=form, token=token)
+
 
 @auth.route("/logout", methods=["GET", "POST"])
 @login_required
