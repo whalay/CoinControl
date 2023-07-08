@@ -22,7 +22,6 @@ class Register(Resource):
     @monitor
     def post(self):
         # app login written here
-        
         try:
             user_data = request.get_json()
             username = user_data.get("username")
