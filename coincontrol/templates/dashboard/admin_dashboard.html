@@ -4,7 +4,7 @@
 <section class="admin-dashboard">
         {% for message in get_flashed_messages() %}
         <div class="success">
-            <div class="success-alert" data-aos="fade-down" data-aos-delay="300">
+            <div class="success-alert" data-aos="fade-left" data-aos-offset="400" data-aos-easing="ease-in-out">
                 <p>{{ message }}</p>   
                 <span class="collapse-button" onclick="this.parentNode.style.display='none';"><svg 
                     width="24"

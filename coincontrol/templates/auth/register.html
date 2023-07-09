@@ -80,7 +80,7 @@
                     
                     <div class="google-bx">
                         <img src="{{ url_for('static', filename='img/google.svg') }}" alt="google-icon"> 
-                        <a href="#">Sign up with Google</a>
+                        <a href="{{ url_for('auth.google_oauth_signup')}}">Sign up with Google</a>
                     </div>
                     
 

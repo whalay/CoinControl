@@ -10,6 +10,11 @@ class Config:
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
     WTF_CSRF_ENABLED = True
     CSRF_ENABLED = True
+    GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+    GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
+    GOOGLE_REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI", None)
+    CLIENT_SECRETS_JSON = os.environ.get("CLIENT_SECRETS_JSON")
+    # OAUTHLIB_INSECURE_TRANSPORT = os.environ.get("OAUTHLIB_INSECURE_TRANSPORT")
     
     @staticmethod
     def init_app(app):

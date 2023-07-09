@@ -288,11 +288,16 @@ input[type="submit"]:hover{
 .unconfirmed{
    padding: 20px 5%;
 }
-.unconfirmed .container{
+
+  
+.unconfirmed .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: var(--light-color);
 
 }
 /* .box-img{
@@ -316,7 +321,8 @@ input[type="submit"]:hover{
 }
 
 .box-text p{
-    font-size: 1rem;
+    font-size: 0.9rem;
+    color: #1e3c87;
 }
 
 .box-text p a{
@@ -336,7 +342,7 @@ input[type="submit"]:hover{
 /* alert */
 .success{
     width: 100%;
-    padding: 0 5%;
+    /* padding: 0 5%; */
     transition: all .10s ease-in-out;
     margin-bottom: 5px;
 }

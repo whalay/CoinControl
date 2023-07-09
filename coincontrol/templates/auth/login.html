@@ -7,7 +7,7 @@
      
             {% for message in get_flashed_messages() %}
             <div class="success">
-                <div class="success-alert" data-aos="fade-down" data-aos-delay="300">
+                <div class="success-alert" data-aos="fade-left" data-aos-offset="400" data-aos-easing="ease-in-out">
                     <p>{{ message }}</p>   
                     <span class="collapse-button" onclick="this.parentNode.style.display='none';"><svg 
                         width="24"
@@ -83,7 +83,7 @@
 
                     <div class="google-bx">
                         <img src="{{ url_for('static', filename='img/google.svg') }}" alt="google-icon"> 
-                        <a href="#">Sign in with Google</a>
+                        <a href="{{ url_for('auth.google_oauth_login')}}">Sign in with Google</a>
                     </div>
                     
                     <div class="form-footer">
