@@ -20,7 +20,7 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 
 auth = Blueprint("auth", __name__, template_folder="templates", static_folder="static")
-
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 
 @auth.route("/register", methods=["GET", "POST"])
@@ -96,6 +96,7 @@ def resend_confirmation():
     flash("A new confirmation email has been sent.")
     return redirect(url_for("auth.unconfirmed"))
 
+
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
@@ -122,7 +123,7 @@ def login():
 
     return render_template("auth/login.html", form=form)
 
-    
+
 @auth.route("/google/Oauth/login", methods=["GET"])
 def google_oauth_login():
     client_secrets_json = os.environ.get("CLIENT_SECRETS_JSON")
@@ -130,18 +131,18 @@ def google_oauth_login():
     flow = Flow.from_client_config(
         client_secrets,
         scopes=[
-        'openid',
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
+            "openid",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
         ],
-        redirect_uri = os.environ.get("GOOGLE_REDIRECT_URI")
+        redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"),
     )
     authorization_url, state = flow.authorization_url(
-        access_type = 'offline',
-        include_granted_scopes = 'true'
+        access_type="offline", include_granted_scopes="true"
     )
-    session['state'] = state
+    session["state"] = state
     return redirect(authorization_url)
+
 
 @auth.route("/google/Oauth/signup", methods=["GET"])
 def google_oauth_signup():
@@ -150,68 +151,66 @@ def google_oauth_signup():
     flow = Flow.from_client_config(
         client_secrets,
         scopes=[
-        'openid',
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
+            "openid",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
         ],
-        redirect_uri = os.environ.get("GOOGLE_REDIRECT_URI")
+        redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"),
     )
     authorization_url, state = flow.authorization_url(
-        access_type = 'offline',
-        include_granted_scopes = 'true'
+        access_type="offline", include_granted_scopes="true"
     )
-    session['state'] = state
+    session["state"] = state
     return redirect(authorization_url)
+
 
 @auth.route("/google/auth/authorized", methods=["GET"])
 def google_auth_authorized():
-    state = session['state']
+    state = session["state"]
     client_secrets_json = os.environ.get("CLIENT_SECRETS_JSON")
     client_secrets = json.loads(client_secrets_json)
     flow = Flow.from_client_config(
         client_secrets,
         scopes=[
-        'openid',
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-    ],
-        redirect_uri = os.environ.get("GOOGLE_REDIRECT_URI"),
-        state = state
+            "openid",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+        ],
+        redirect_uri=os.environ.get("GOOGLE_REDIRECT_URI"),
+        state=state,
     )
-    flow.fetch_token(
-        authorization_response = request.url,
-        code_verifier= ''
-    )
-    
-    credentials = flow.credentials
-    session['google_token'] = credentials.token
-    id_token_info = id_token.verify_oauth2_token(
-        credentials.id_token,
-        requests.Request(),
-        flow.client_config['client_id']
-    )
-    session['user_email'] = id_token_info.get('email')
-    session['user_name'] = id_token_info.get('name')
+    flow.fetch_token(authorization_response=request.url, code_verifier="")
 
-    username = session['user_name'] 
-    email =   session['user_email']
-    
+    credentials = flow.credentials
+    session["google_token"] = credentials.token
+    id_token_info = id_token.verify_oauth2_token(
+        credentials.id_token, requests.Request(), flow.client_config["client_id"]
+    )
+    session["user_email"] = id_token_info.get("email")
+    session["user_name"] = id_token_info.get("name")
+
+    username = session["user_name"]
+    email = session["user_email"]
+
     existing_user = Users.query.filter_by(email=email).first()
     if existing_user:
         if existing_user.verified != True:
             token = generate_confirmation_token(existing_user.email)
             confirm_url = url_for("auth.confirm_token", token=token, _external=True)
             send_confirm_email(
-            email_receiver=email, user=existing_user.username, confirm_url=confirm_url
+                email_receiver=email,
+                user=existing_user.username,
+                confirm_url=confirm_url,
             )
+        login_user(existing_user)
         flash("logged in successfully")
-        return redirect(url_for('main.dashboard'))
+        return redirect(url_for("main.dashboard"))
 
     user = Users(email=email, username=username)
     user.generate_password_hash(os.environ.get("FAKE_USER_GOOGLE_PASSWORD"))
     db.session.add(user)
     db.session.commit()
-    
+
     token = generate_confirmation_token(user.email)
     confirm_url = url_for("auth.confirm_token", token=token, _external=True)
 
@@ -221,8 +220,9 @@ def google_auth_authorized():
 
     login_user(user)
     flash("logges in successfully")
-    return redirect(url_for('main.dashboard'))
-    
+    return redirect(url_for("main.dashboard"))
+
+
 @auth.route("/forgotpassword", methods=["GET", "POST"])
 def forgotpassword():
     form = EmailForm()

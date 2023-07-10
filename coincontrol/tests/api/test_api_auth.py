@@ -2,7 +2,7 @@ import unittest
 from coincontrol.extensions import db
 from coincontrol.models import Users
 from coincontrol import create_app
-from unittest.mock import patch
+# from unittest.mock import patch
 
 """
 Code Analysis

@@ -110,6 +110,8 @@ def create_app(config_name='development'):
 )
             return redirect(url_for('auth.login'))
      
+          
+     
     # initialize the db 
     db.init_app(app)
     
