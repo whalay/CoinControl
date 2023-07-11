@@ -37,39 +37,16 @@ class TestRegister(unittest.TestCase):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
-        
-    """
-    Tests that a user can successfully register with valid data
-    """
-    def test_successful_registration(self):
-        
-        username = "testuser"
-        email = "testuser@test.com",
-        password = "password",
-        confirm_password = "password"
-        
-        data = {
-            "username": username,
-            "email": email,
-            "password": password,
-            "confirm_password": confirm_password
-        }
-        
-        tester = self.client
-        response = tester.post("/register", json=data, follow_redirects=True)        
-        self.assertEqual(response.status_code, 200)
-        # self.assertIn(b'A confirmation email has been sent to your email address.', response.data)
-   
-         
+             
+    """ Test empty form submission """     
     def test_empty_form_submission(self):
-        # Test empty form submission
         tester = self.client
         response = tester.post("/register", data={}, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"This field is required.", response.data)
-        
+    
+    """ Test invalid form submission """     
     def test_invalid_form_submission(self):
-        # Test invalid form submission
         username = "testuser"
         email = "invalid-email",
         password = "pass",
@@ -84,14 +61,39 @@ class TestRegister(unittest.TestCase):
         
         tester = self.client
         response = tester.post("/register", json=data, follow_redirects=True)
-        print(response.status_code)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Invalid email address.", response.data)
         self.assertIn(b"Password must match confirm password", response.data)
         self.assertIn(b"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character", response.data)
+
+    """ Tests that a user can successfully register with valid data """
+    def test_successful_registration(self):
+        username="testuser" 
+        email="testuser@test.com"
+        password = "Test1$"
+        confirm_password = "Test1$"
         
+        data = {
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirm_password": confirm_password
+        }
+        
+        tester = self.client
+        response = tester.post("/register", json=data, follow_redirects=True) 
+        self.assertEqual(response.status_code, 200)
+        
+        user = Users.query.filter_by(email=email).first()
+        self.assertIsNotNone(user)
+        self.assertEqual(user.email, email) 
+        self.assertEqual(user.username, username) 
+        
+        """ Tests that a user cannot register with an existing email """
+        response = tester.post("/register", json=data, follow_redirects=True) 
+        self.assertIn(b"This email is taken. Please choose a different one", response.data)
 
-
+        
 class TestLogin(unittest.TestCase):
     def create_app(self):
         # Creating a test flask application
