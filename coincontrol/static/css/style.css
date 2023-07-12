@@ -372,8 +372,8 @@ section {
 
 .about-us .container{
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 20px;
 }
 .about-text{
     display: flex;
@@ -393,10 +393,10 @@ section {
 .about-bx img{
     width: 100%;
     height: auto;
+    border-radius: 50px 0;
 }
 .about-dev span{
     display: flex;
-    align-items: center;
     gap: 10px;
 }
 
@@ -415,7 +415,35 @@ section {
     font-size: 1rem;
     line-height: 1.4;
 }
+.about-dev .wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
+.about-dev .wrapper p{
+    font-size: 1rem;
+}
+
+.contact-us .contact-text{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contact-text p{
+    font-size: 1rem;
+}
+
+.contact-text ul{
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+.contact-text li{
+    display: inline-flex;
+    gap: 5px;
+}
 /* about section ends  */
 /* alert */
 .success{
@@ -515,7 +543,10 @@ footer .container p {
 
     }
 
-  
+    .about-us .container {
+        flex-wrap: wrap;
+        flex-direction: column-reverse;
+    }
 
 }
 
@@ -591,6 +622,23 @@ footer .container p {
 
     footer .container p {
         font-size: 0.8rem;
+    }
+
+    .about-text p{
+        font-size: 0.8rem;
+    }
+
+    .about-dev .wrapper p{
+        font-size: 0.8rem;
+    }
+
+    .contact-text p{
+        font-size: 0.8rem;
+    }
+
+    .ab {
+        display: flex;
+        flex-wrap: wrap;
     }
 }
 @media (max-width:280px) {
