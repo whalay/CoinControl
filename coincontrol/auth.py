@@ -36,8 +36,13 @@ def register():
         user.generate_password_hash(password)
 
         db.session.add(user)
-        db.session.commit()
-
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request. Please try again later.')
+            return redirect(url_for("auth.register"))
+        
         token = generate_confirmation_token(user.email)
         confirm_url = url_for("auth.confirm_token", token=token, _external=True)
 

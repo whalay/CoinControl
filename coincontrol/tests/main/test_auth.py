@@ -69,7 +69,7 @@ class TestRegister(unittest.TestCase):
     """ Tests that a user can successfully register with valid data """
     def test_successful_registration(self):
         username="testuser" 
-        email="testuser@test.com"
+        email="samuelayano6@gmail.com"
         password = "Test1$"
         confirm_password = "Test1$"
         
