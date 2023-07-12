@@ -1,0 +1,83 @@
+{% extends 'base.html' %} {% block title %}About Us{% endblock %} {% block
+content %}
+
+<!-- About us section -->
+<section class="about-us" id="about-us">
+  <div class="container">
+    <div class="about-text">
+      <span>About-us</span>
+      <h2>Our mission</h2>
+      <p>
+        At CoinControl, we believe that managing your personal finances should
+        be simple, efficient, and empowering. Our mission is to provide you with
+        the tools and insights you need to take control of your money and
+        achieve your financial goals. With CoinControl, you can easily track
+        your income, expenses, and investments all in one place. Our intuitive
+        interface allows you to categorize transactions, set budgets, and
+        monitor your spending patterns effortlessly. Gain a clear understanding
+        of where your money is going and make informed decisions about your
+        financial future.
+      </p>
+    </div>
+
+    <div class="about-bx" data-aos="zoom-in-up" data-aos-delay="300">
+      <img
+        src="{{ url_for('static', filename='img/about-bg.png') }}"
+        alt="coincontrol-logo"
+      />
+    </div>
+  </div>
+</section>
+
+<section class="about-dev">
+  <div class="container">
+    <div class="wrapper">
+      <span>About the Developer</span>
+      <h2>Meet the Team</h2>
+      <span
+        >Samuel Ayano - Fullstack developer / Lead Developer
+        <a href="https://github.com/onaya7"
+          ><i class="bx bxl-github" style="color: #1a194d"></i
+        ></a>
+      </span>
+
+      <p>
+        Samuel is a passionate software engineer with over 2 years of experience
+        in developing webapplications. He is rounding up his 5th year in the
+        university as an Electrical Electronics Engineer.
+      </p>
+    </div>
+
+    <div class="wrapper">
+      <span>Motivation and Purpose</span>
+      <p>
+        Samuel's passion for CoinControl and his desire to empower individuals
+        to take control of their financial lives led him to create the Personal
+        Finance Tracker - CoinControl. He beleives that everyone deserves a tool
+        that simplifies money management and helps achieve financial goals.
+      </p>
+    </div>
+
+    <div class="wrapper">
+      <span>Contact Us</span>
+      <p>
+        If you have any questions, feedback, or need assistance, please don't
+        hesitate to reach out to our dedicated support team. We're here to help
+        you make the most of CoinControl. Thank you for choosing CoinControl to
+        guide you on your journey to financial well-being!
+      </p>
+      <ul>
+        <li>
+          <i class="bx bxl-gmail" style="color: #1a194d"></i> Email:
+          support@coincontrol.com
+        </li>
+        <li>
+          <i class="bx bxs-phone" style="color: #1a194d"></i> Phone:
+          816-7579-409
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+<!-- about us section end -->
+{% endblock %}

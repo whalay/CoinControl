@@ -8,6 +8,10 @@ main = Blueprint("main", __name__, template_folder='templates', static_folder='s
 def home():
     return render_template('home.html')
 
+@main.route('/about', methods=["GET"])
+def about():
+    return render_template('about.html')
+
 @main.route('/dashboard', methods=["GET"])
 @login_required
 @check_confirmed

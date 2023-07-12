@@ -365,6 +365,58 @@ section {
 
 /* cta section end */
 
+/* about section */
+#about-us{
+   padding: 150px 5% 10px 5%;
+}
+
+.about-us .container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.about-text{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.about-text p{
+    font-size: 1rem;
+    text-align: justify;
+    line-height: 1.4;
+}
+.about-text, .about-bx{
+    width: 100%;
+}
+
+.about-bx img{
+    width: 100%;
+    height: auto;
+}
+.about-dev span{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.about-dev i{
+    font-size: 1.5rem;
+}
+.about-dev li{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+.about-dev .container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* about section ends  */
 /* alert */
 .success{
     width: 100%;
