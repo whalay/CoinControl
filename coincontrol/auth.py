@@ -57,13 +57,18 @@ def register():
     return render_template("auth/register.html", form=form)
 
 
-@auth.route("/unconfirmed", methods=["GET", "POST"])
+@auth.route("/unconfirmed", methods=["GET"])
 @login_required
 def unconfirmed():
-    if current_user.verified:
+    try:
+        if current_user.verified:
+            flash("Your account has already been verified. Please login.")
+            return redirect(url_for("main.home"))
+        flash("An error occurred while processing your request. Please try again later.")
+        return render_template("auth/unconfirmed.html")
+    except Exception as e:
+        flash("An error occurred while processing your request. Please try again later.")
         return redirect(url_for("main.home"))
-    return render_template("auth/unconfirmed.html")
-
 
 # Token confirmation route
 @auth.route("/confirm/<token>", methods=["GET"])

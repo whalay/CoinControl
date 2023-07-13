@@ -3,7 +3,7 @@ from coincontrol.extensions import db
 from coincontrol.models import Users
 from coincontrol import create_app
 from flask_jwt_extended import create_access_token
-from flask import request
+
 
 """
 Code Analysis
@@ -65,14 +65,13 @@ class TestRegister(unittest.TestCase):
         self.assertIn(b"Invalid email address.", response.data)
         self.assertIn(b"Password must match confirm password", response.data)
         self.assertIn(b"Password must include at least one uppercase letter, one lowercase letter, one number, and one special character", response.data)
-
-    """ Tests that a user can successfully register with valid data """
-    def test_successful_registration(self):
-        username="testuser" 
-        email="samuelayano6@gmail.com"
+        
+    """ Tests that a user cannot register with an existing email """
+    def test_existing_email(self):
+        username="testuser1" 
+        email="samuelayano6+1@gmail.com"
         password = "Test1$"
         confirm_password = "Test1$"
-        
         data = {
             "username": username,
             "email": email,
@@ -82,17 +81,56 @@ class TestRegister(unittest.TestCase):
         
         tester = self.client
         response = tester.post("/register", json=data, follow_redirects=True) 
-        self.assertEqual(response.status_code, 200)
         
         user = Users.query.filter_by(email=email).first()
         self.assertIsNotNone(user)
         self.assertEqual(user.email, email) 
         self.assertEqual(user.username, username) 
-        
-        """ Tests that a user cannot register with an existing email """
         response = tester.post("/register", json=data, follow_redirects=True) 
         self.assertIn(b"This email is taken. Please choose a different one", response.data)
 
+        
+    """ Testing registration data flow with valid data """
+    def test_successful_registration(self):
+        """ Adding user to the database """
+        username="testuser" 
+        email="samuelayano6@gmail.com"
+        password = "Test1$"
+        confirm_password = "Test1$"
+        data = {
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirm_password": confirm_password
+        }
+        tester = self.client
+        response = tester.post("/register", json=data, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'A confirmation email has been sent to your email address.', response.data) 
+
+        
+        """  Tests that 'unconfirmed' page is rendered when user is logged in and not verified"""
+        response = tester.get("/unconfirmed", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        
+        """ Tests that user is redirected to home page when already verified. """
+        user = Users.query.filter_by(email=email).first()
+        user.verified = True
+        db.session.commit()
+        response = tester.get("/unconfirmed", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Your account has already been verified. Please login.', response.data)
+        
+        """ Tests that user is redirected to home page when an error occurs. """
+        user.verified = None
+        db.session.commit()
+        response = tester.get("/unconfirmed", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'An error occurred while processing your request. Please try again later.', response.data)
+
+        
+        
+  
         
 class TestLogin(unittest.TestCase):
     def create_app(self):
