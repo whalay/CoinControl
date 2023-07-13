@@ -3,21 +3,23 @@ from coincontrol.extensions import db
 from coincontrol.models import Users
 from coincontrol import create_app
 from flask_jwt_extended import create_access_token
+from flask import session
+from coincontrol.token import generate_confirmation_token
 
 
 """
 Code Analysis
 
 Main functionalities:
-The Register route is responsible for handling user registration. It receives user data and validates it on submit using the RegistrationForm class, and creates a new user in the Users table of the database.
+The Register and Login route is responsible for handling user registration and logging in process. It receives user data and validates it on submit using the RegistrationForm class, and creates a new user in the Users table of the database and logs the user into the system.
 Methods:
-- post: receives user data, validates it using RegistrationForm, creates a new user in the database, and returns a response with a status code and a message.
+- post: receives user data, validates it using RegistrationForm, creates a new user in the database, and returns a response with a status code and a message and logs in the user .
 
 Fields:
 - None.
 """
 
-class TestRegister(unittest.TestCase):
+class Test_Register_Login(unittest.TestCase):
     def create_app(self):
         # Creating a test flask application
         # It takes in a parameter called testing which is passed as an argument to the config_name variable
@@ -91,7 +93,7 @@ class TestRegister(unittest.TestCase):
 
         
     """ Testing registration data flow with valid data """
-    def test_successful_registration(self):
+    def test_successful_registration_(self):
         """ Adding user to the database """
         username="testuser" 
         email="samuelayano6@gmail.com"
@@ -127,105 +129,45 @@ class TestRegister(unittest.TestCase):
         response = tester.get("/unconfirmed", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'An error occurred while processing your request. Please try again later.', response.data)
-
         
-        
-  
-        
-class TestLogin(unittest.TestCase):
-    def create_app(self):
-        # Creating a test flask application
-        # It takes in a parameter called testing which is passed as an argument to the config_name variable
-        app = create_app(config_name="testing")
-        return app
-
-    def setUp(self):
-        # Creating and configuring the test database
-        self.app = self.create_app()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        db.create_all()
-        self.client = self.app.test_client(use_cookies=True)
-
-    def tearDown(self):
-        # Cleaning up the test database
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
-    pass
-
-
-class TestLoginOut(unittest.TestCase):
-    def create_app(self):
-        # Creating a test flask application
-        # It takes in a parameter called testing which is passed as an argument to the config_name variable
-        app = create_app(config_name="testing")
-        return app
-
-    def setUp(self):
-        # Creating and configuring the test database
-        self.app = self.create_app()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        db.create_all()
-        self.client = self.app.test_client(use_cookies=True)
-
-    def tearDown(self):
-        # Cleaning up the test database
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
-    pass
-
-
-    # def test_user_registration(self):
-    #     # Testing user registration process
-    #     user = Users(
-    #         username="testuser", password="testpassword", email="test@gmail.com"
-    #     )
-    #     db.session.add(user)
-    #     db.session.commit()
-
-    #     tester = self.client
-    #     response = tester.post(
-    #         "/register",
-    #         json={
-    #             "username": "testuser",
-    #             "email": "test@gmail.com",
-    #             "password": "testpassword",
-    #             "confirm_password": "testpassword"  
-    #         },
-    #     )
-    #     self.assertEqual(response.status_code, 200)
-    #     # self.assertIn(b'User registered successfully', response.data)
-
-
-
-
-
-
-
-    def test_user_login(self):
-        # Testing user login process
-        username = "testuser"
-        email = "test@gmail.com"
-        password = "testpassword"
-        user = Users(username=username, email=email, password=password)
-        user.generate_password_hash(password)
-        db.session.add(user)
-        db.session.commit()
-
-        # login
-        tester = self.client
+        """Tests that a user can successfully login with correct email and password"""
         response = tester.post(
             "/login", json={"email": email, "password": password}, follow_redirects=True
         )
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b'logged in successfully', response.data)
 
-        # log out
-        response = tester.post("/logout", follow_redirects=True)
+        """Tests that an error message is displayed when user enters incorrect email"""
+        response = tester.post(
+                '/login',
+                data=dict(email='wrong@test.com', password='password'),
+                follow_redirects=True
+            )
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Login Unsuccessful. Please check username and password', response.data)
 
+        
+class TestConfirmToken(unittest.TestCase):
+    def create_app(self):
+        # Creating a test flask application
+        # It takes in a parameter called testing which is passed as an argument to the config_name variable
+        app = create_app(config_name="testing")
+        return app
+
+    def setUp(self):
+        # Creating and configuring the test database
+        self.app = self.create_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client(use_cookies=True)
+
+    def tearDown(self):
+        # Cleaning up the test database
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+        
     def test_confirm_token(self):
         # Testing token confirmation process
         username = "testuser"
@@ -258,6 +200,74 @@ class TestLoginOut(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         
         
+        
+class TestLogin(unittest.TestCase):
+    def create_app(self):
+        # Creating a test flask application
+        # It takes in a parameter called testing which is passed as an argument to the config_name variable
+        app = create_app(config_name="testing")
+        return app
+
+    def setUp(self):
+        # Creating and configuring the test database
+        self.app = self.create_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client(use_cookies=True)
+
+    def tearDown(self):
+        # Cleaning up the test database
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+    
+class TestLoginOut(unittest.TestCase):
+    def create_app(self):
+        # Creating a test flask application
+        # It takes in a parameter called testing which is passed as an argument to the config_name variable
+        app = create_app(config_name="testing")
+        return app
+
+    def setUp(self):
+        # Creating and configuring the test database
+        self.app = self.create_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client(use_cookies=True)
+
+    def tearDown(self):
+        # Cleaning up the test database
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+    pass
+
+
+
+    def test_user_login(self):
+        # Testing user login process
+        username = "testuser"
+        email = "test@gmail.com"
+        password = "testpassword"
+        user = Users(username=username, email=email, password=password)
+        user.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+
+        # login
+        tester = self.client
+        response = tester.post(
+            "/login", json={"email": email, "password": password}, follow_redirects=True
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # log out
+        response = tester.post("/logout", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    
         
         
 
