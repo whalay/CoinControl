@@ -42,7 +42,7 @@ def send_confirm_email(email_receiver, user, confirm_url):
     
     
     context = ssl.create_default_context()
-
+    
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
         smtp.login(email_username, email_password)
         smtp.sendmail(email_username, email_receiver, message.as_string())

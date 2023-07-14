@@ -200,6 +200,34 @@ class TestConfirmToken(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         
         
+class TestResendConfirmation(unittest.TestCase):
+    def create_app(self):
+        # Creating a test flask application
+        # It takes in a parameter called testing which is passed as an argument to the config_name variable
+        app = create_app(config_name="testing")
+        return app
+
+    def setUp(self):
+        # Creating and configuring the test database
+        self.app = self.create_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client(use_cookies=True)
+
+    def tearDown(self):
+        # Cleaning up the test database
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+
+    """ Tests that the user is logged in before resending confirmation"""   
+    def test_resend_confirmation_logged_in(self):
+        tester = self.client
+        response = tester.get('/resend-token', follow_redirects=True)
+        self.assertIn(b'Please log in to access this page.', response.data)
+        
+             
         
 class TestLogin(unittest.TestCase):
     def create_app(self):
@@ -222,30 +250,6 @@ class TestLogin(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
     
-class TestLoginOut(unittest.TestCase):
-    def create_app(self):
-        # Creating a test flask application
-        # It takes in a parameter called testing which is passed as an argument to the config_name variable
-        app = create_app(config_name="testing")
-        return app
-
-    def setUp(self):
-        # Creating and configuring the test database
-        self.app = self.create_app()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        db.create_all()
-        self.client = self.app.test_client(use_cookies=True)
-
-    def tearDown(self):
-        # Cleaning up the test database
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
-    pass
-
-
-
     def test_user_login(self):
         # Testing user login process
         username = "testuser"
@@ -266,6 +270,41 @@ class TestLoginOut(unittest.TestCase):
         # log out
         response = tester.post("/logout", follow_redirects=True)
         self.assertEqual(response.status_code, 200)
+    
+class TestForgotpassword(unittest.TestCase):
+    def create_app(self):
+        # Creating a test flask application
+        # It takes in a parameter called testing which is passed as an argument to the config_name variable
+        app = create_app(config_name="testing")
+        return app
+
+    def setUp(self):
+        # Creating and configuring the test database
+        self.app = self.create_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client(use_cookies=True)
+
+    def tearDown(self):
+        # Cleaning up the test database
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+        
+    
+    def test_valid_email(self):
+        email="samuelayano6@gmail.com"
+        data = {
+        "email": email,
+        }
+        tester = self.client
+        response = tester.post("/forgotpassword", json=data, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+
+
+
 
     
         

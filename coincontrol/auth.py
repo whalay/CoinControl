@@ -96,13 +96,21 @@ def confirm_token(token):
 @auth.route("/resend-token", methods=["GET"])
 @login_required
 def resend_confirmation():
-    token = generate_confirmation_token(current_user.email)
+    try:
+        token = generate_confirmation_token(current_user.email)
+    except:
+        flash("Error generating confirmation token. Please try again later.")
+        return redirect(url_for("auth.unconfirmed"))
     confirm_url = url_for("auth.confirm_token", token=token, _external=True)
-    resend_confirm_email(
-        email_receiver=current_user.email,
-        user=current_user.username,
-        confirm_url=confirm_url,
-    )
+    try:
+        resend_confirm_email(
+            email_receiver=current_user.email,
+            user=current_user.username,
+            confirm_url=confirm_url,
+        )
+    except:
+        flash("Error sending confirmation email. Please try again later.")
+        return redirect(url_for("auth.unconfirmed"))
     flash("A new confirmation email has been sent.")
     return redirect(url_for("auth.unconfirmed"))
 
