@@ -308,8 +308,6 @@ class TestForgotpassword(unittest.TestCase):
         }
         tester = self.client
         response = tester.post("/forgotpassword", json=data, follow_redirects=True)
-        print(response.data)
-        # self.assertEqual(b'We just emailed samuelayano6@gmail.com with instructions to reset your password' , response.data)
         self.assertEqual(response.status_code, 200)
 
 
