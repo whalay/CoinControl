@@ -292,14 +292,24 @@ class TestForgotpassword(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
         
-    
     def test_valid_email(self):
+        """creating a test user"""  
+        username = "testuser"
         email="samuelayano6@gmail.com"
+        password= "Testuser1$"
+        
+        user = Users(username=username, email=email)
+        user.generate_password_hash(password)
+        db.session.add(user)
+        db.session.commit()
+        
         data = {
         "email": email,
         }
         tester = self.client
         response = tester.post("/forgotpassword", json=data, follow_redirects=True)
+        print(response.data)
+        # self.assertEqual(b'We just emailed samuelayano6@gmail.com with instructions to reset your password' , response.data)
         self.assertEqual(response.status_code, 200)
 
 

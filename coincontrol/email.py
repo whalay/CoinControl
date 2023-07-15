@@ -102,7 +102,7 @@ def send_passwordreset_email(email_receiver, user, confirm_url):
         <html>
         <body
             <h3>Dear {user},</h3><br>
-            <p>We have received your request for coin control recovery. 
+            <p>We have received your request for account recovery. 
             We understand that you are experiencing issues accessing your coins and we are here to assist you. 
             Please click the link below to initiate the recovery process</p><br>
             <p><a href="{ confirm_url }">Click here to reset your password</a></p><br>
