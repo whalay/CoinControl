@@ -7,7 +7,7 @@ Welcome to Coincontrol! This Flask-based web application helps you track your pe
 
 **Final Project Blog Article**: [Read about the development journey](coming soon)
 
-**Author(s) LinkedIn Profiles**:
+**Author's LinkedIn Profile**:
 - Samuel ayano: [linkedin.com/in/samuel-ayano-1336bb247](https://www.linkedin.com/in/samuel-ayano-1336bb247/)
 
 ## Installation
