@@ -293,7 +293,7 @@ def logout():
 @login_required
 @check_confirmed
 def admin():
-    if current_user.is_admin != True:
-        flash("You need to be an admin to access this page")
-        return redirect(url_for("auth.login"))
+    # if current_user.is_admin != True:
+    #     flash("You need to be an admin to access this page")
+    #     return redirect(url_for("auth.login"))
     return render_template("dashboard/admin_dashboard.html")
