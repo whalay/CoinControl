@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, flash, render_template, request
 from flask_wtf import CSRFProtect
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager, current_user
+from flask_cors import CORS
 from coincontrol.config import config
 from coincontrol.auth import auth
 from coincontrol.main import main
@@ -30,6 +31,9 @@ def create_app(config_name='development'):
     
     # initialize csrf for flask forms
     CSRFProtect(app)
+    
+    # configure Cors
+    CORS(app)
    
     # initialize jwt
     jwt = JWTManager(app)

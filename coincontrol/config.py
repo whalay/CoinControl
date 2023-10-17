@@ -20,6 +20,7 @@ class Config:
     def init_app(app):
         pass
     
+    
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
