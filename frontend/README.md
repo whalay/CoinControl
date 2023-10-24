@@ -1,8 +1,22 @@
-# React + Vite
+Installation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Follow these steps to set up and run Finance Tracker (CoinControl):
 
-Currently, two official plugins are available:
+Clone the repository:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+git clone https://github.com/onaya7/CoinControl.git
+
+Navigate to the project directory:
+
+cd CoinControl/frontend
+
+Install dependencies:
+
+npm install
+
+
+To run the project locally, use the following command:
+
+npm start
+
+This will start the development server, and you can view the application by opening http://localhost:3000 in your browser.
