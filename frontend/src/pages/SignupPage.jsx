@@ -1,12 +1,17 @@
 import { useState } from "react";
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
 import signup from "../assets/images/signup-bg.png";
+import coincontrol from "../assets/images/coincontrol.png";
+
 const SignupPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirm_password: "",
   });
 
   const handleChange = (e) => {
@@ -21,14 +26,40 @@ const SignupPage = () => {
     console.log("Signing in with Google");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // Handle signup logic (can be added later)
+   
+    try {
+      // Assuming you have a backend API endpoint for user registration
+      const response = await axios.post('http://127.0.0.1:5000/api/v1/register', formData);
+    
+      console.log('Registration successful:', response.data);
+      // Optionally, you can redirect or perform other actions upon successful registration
+      navigate('/login');
+    } catch (error) {
+      if (error.response) {
+        // The request was made, but the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Registration failed:', error.response.data);
+        console.error('Status code:', error.response.status);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received from the server');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error during registration:', error.message);
+      }
+    }
     console.log("Form submitted:", formData);
   };
   return (
-    <div className="h-screen  md:flex items-center p-2 ">
-        <img src={signup} alt="" className="md:w-1/2"/>
+    <div className="h-screen  md:flex items-center md:px-10 px-3 ">
+      <div className="md:w-1/2">
+      <Link to='/'>
+        <img src={coincontrol} alt="logo" className=" h-16 " /></Link>
+        <img src={signup} alt="" className=""/>
+      </div>
+
       <div className="max-w-md md:max-w-xl mx-auto   mt-8 p-6 bg-gray-200 rounded-xl  space-y-5  shadow-md md:w-1/2">
         <h2 className="text-2xl font-semibold mb-4">Create an account</h2>
         <p className="mb-4">
@@ -90,16 +121,16 @@ const SignupPage = () => {
           </div>
           <div className="mb-4">
             <label
-              htmlFor="confirmPassword"
+              htmlFor="confirm_password"
               className="block text-gray-600 font-medium"
             >
               Confirm Password
             </label>
             <input
               type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
+              id="confirm_password"
+              name="confirm_password"
+              value={formData.confirm_password}
               onChange={handleChange}
               className="form-input mt-1 block w-full focus:outline-none p-1 rounded-xl"
               required

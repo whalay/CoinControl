@@ -1,25 +1,32 @@
-import  { useState } from "react";
+import { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+
+import { useAuth } from "../context/AuthContext";
 import { AiOutlineMail } from "react-icons/ai";
-import { AiOutlineLock} from "react-icons/ai";
+import { AiOutlineLock } from "react-icons/ai";
 
 import signin from "../assets/images/signin-bg.png";
+import coincontrol from "../assets/images/coincontrol.png";
+
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const { login, isLoggedIn } = useAuth();
+  const [formState, setFormState] = useState({
+    email: "",
+    password: "",
+    rememberMe: false, // New state for "Remember Me"
+  });
 
-  const handleLogin = () => {
-    // Implement your login logic here
-    console.log(
-      "Logging in with:",
-      email,
-      password,
-      "Remember Me:",
-      rememberMe
-    );
+  const handleLogin = async () => {
+    const userData = {
+      email: formState.email,
+      password: formState.password,
+      rememberMe: formState.rememberMe, // Include "Remember Me" value
+    };
+
+    // Call the login function with userData
+    login(userData);
   };
-
   const handleGoogleSignIn = () => {
     // Implement Google Sign-In logic
     console.log("Signing in with Google");
@@ -29,54 +36,58 @@ const LoginPage = () => {
     // Implement your signup logic here
     console.log("Redirecting to signup page");
   };
-  return (
-    <div className="h-screen flex md:flex-row flex-col items-center px-10">
+
+  return isLoggedIn ? (
+    <Navigate to="/dashboard" />
+  ) : (
+    <div className="h-screen flex md:flex-row flex-col items-center md:px-10 px-3">
       <div className="md:w-1/2">
+        <Link to='/'>
+        <img src={coincontrol} alt="logo" className=" h-16 " /></Link>
+
         <img src={signin} alt="" />
       </div>
-      <div className="max-w-md mx-auto md:w-1/2 mt-8 shadow-md bg-gray-200 rounded-xl p-10 space-y-5">
+      <div className="max-w-md mx-auto md:w-1/2 mt-8 shadow-md bg-gray-200 rounded-xl md:p-10 p-3 space-y-5">
         <h2 className="text-3xl font-semibold ">Welcome Back!</h2>
         <p>Start managing your finance faster and better.</p>
 
         <form>
-          <div className="mb-4 relative">
-            <label
-              htmlFor="email"
-              className="block text-gray-600 text-sm font-medium mb-2"
-            >
+        <div className="mb-4 relative">
+            <label htmlFor="email" className="sr-only">
               Email
             </label>
-            <input
-              type="email"
-              id="email"
-              placeholder=""
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <AiOutlineMail className="absolute left-3 top-1/2 transform  w-6 h-6" />
-            <span className="absolute left-10 top-1/2 transform  text-gray-500">
-              you@coincontrol.com
-            </span>
+            <div className="relative w-full">
+              <AiOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-500" />
+              <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                onChange={(e) =>
+                  setFormState({ ...formState, email: e.target.value })
+                }
+                value={formState.email}
+              />
+            </div>
           </div>
 
           <div className="mb-4 relative">
-            <label
-              htmlFor="password"
-              className="block text-gray-600 text-sm font-medium mb-2"
-            >
+            <label htmlFor="password" className="sr-only">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              placeholder=""
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <AiOutlineLock className="absolute left-3 top-1/2 transform  w-6 h-6" />
-            <span className="absolute left-10 top-1/2 transform  text-gray-500">
-              Atleast 6 characters
-            </span>
+            <div className="relative w-full">
+              <AiOutlineLock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-500" />
+              <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                value={formState.password}
+                onChange={(e) =>
+                  setFormState({ ...formState, password: e.target.value })
+                }
+              />
+            </div>
           </div>
 
           <div className="mb-4 flex items-center">
@@ -84,8 +95,10 @@ const LoginPage = () => {
               type="checkbox"
               id="rememberMe"
               className="mr-2"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
+              checked={formState.rememberMe}
+              onChange={(e) =>
+                setFormState({ ...formState, rememberMe: e.target.checked })
+              }
             />
             <label htmlFor="rememberMe" className="text-sm text-gray-600">
               Remember me
