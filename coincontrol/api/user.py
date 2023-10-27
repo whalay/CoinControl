@@ -8,8 +8,8 @@ from coincontrol.models import Budgets, Expenses, Incomes
 
 from .decorators import monitor
 
-api_main = Blueprint("api_main", __name__)
-api = Api(api_main, prefix="/api/v1")
+api_user_bp = Blueprint("api_user_bp", __name__)
+api = Api(api_user_bp, prefix="/api/v1")
 
 
 class Dashboard(Resource):

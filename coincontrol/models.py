@@ -2,12 +2,14 @@ from coincontrol.extensions import db
 from datetime import datetime
 from coincontrol.extensions import bcrypt
 from flask_login import UserMixin
+from coincontrol.helpers import generate_uuid
 
 
 
 class Users(UserMixin, db.Model):
     __tablename__ = "users"
     user_id = db.Column(db.Integer, primary_key=True)
+    alternative_id = db.Column(db.String(36), default=generate_uuid)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
@@ -30,7 +32,7 @@ class Users(UserMixin, db.Model):
             return str(self.user_id)
         except Exception as e:
             return e
-       
+    
     def __repr__(self):
         return f"Users(username:'{self.username}', email:'{self.email}')"
 

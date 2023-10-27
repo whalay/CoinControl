@@ -10,12 +10,8 @@ from coincontrol.api.blacklist import BLACKLIST
 from http import HTTPStatus
 
 
-api_auth = Blueprint("api_auth", __name__)
-api = Api(api_auth, prefix="/api/v1")
-
-
-auth = HTTPBasicAuth()
-
+api_auth_bp = Blueprint("api_auth_bp", __name__)
+api = Api(api_auth_bp, prefix="/api/v1")
 
 class Register(Resource):
     
@@ -44,6 +40,7 @@ class Register(Resource):
 
                 user = Users(username=username, email=email, password=password)
                 user.generate_password_hash(password)
+                access_token = create_access_token(identity=)
                 db.session.add(user)
                 db.session.commit()
 

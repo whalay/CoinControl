@@ -1,5 +1,6 @@
 import requests
 import os
+import uuid
 
 """
 Helper functions are stored here
@@ -12,3 +13,8 @@ def get_google_provider_cfg():
     except Exception as e:
         return e
     return response
+
+
+def generate_uuid() -> str:
+    return str(uuid.uuid4())
+
