@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import axios from "axios";
+
 
 import { useAuth } from "../context/AuthContext";
 import { AiOutlineMail } from "react-icons/ai";
@@ -8,9 +10,10 @@ import { AiOutlineLock } from "react-icons/ai";
 import signin from "../assets/images/signin-bg.png";
 import coincontrol from "../assets/images/coincontrol.png";
 
-
 const LoginPage = () => {
-  const { login, isLoggedIn } = useAuth();
+  const { login, isLoggedIn} = useAuth();
+  const [errors, setErrors] = useState({}); // New state for errors
+
   const [formState, setFormState] = useState({
     email: "",
     password: "",
@@ -23,10 +26,32 @@ const LoginPage = () => {
       password: formState.password,
       rememberMe: formState.rememberMe, // Include "Remember Me" value
     };
-
     // Call the login function with userData
-    login(userData);
+    try {
+      // Assuming you have a backend API endpoint for user authentication
+      const response = await axios.post(
+        "http://127.0.0.1:5000/api/v1/login",
+        userData
+      );
+
+      // If authentication is successful, set the user data in the state
+      // setUser(response.data.data);
+      // setIsLoggedIn(true);
+      // console.log(response.data.data);
+
+      // You can save it in local storage or a cookie
+      // localStorage.setItem("accessToken", response.data.data.access_token);
+      // localStorage.setItem('userData', JSON.stringify(response.data.data));
+      login(response);
+    } catch (error) {
+      // Handle login failure
+        setErrors(error.response.data);
+
+      // Optionally, you can throw an error or show an error message
+      // throw new Error("Login failed");
+    }
   };
+
   const handleGoogleSignIn = () => {
     // Implement Google Sign-In logic
     console.log("Signing in with Google");
@@ -42,8 +67,9 @@ const LoginPage = () => {
   ) : (
     <div className="h-screen flex md:flex-row flex-col items-center md:px-10 px-3">
       <div className="md:w-1/2">
-        <Link to='/'>
-        <img src={coincontrol} alt="logo" className=" h-16 " /></Link>
+        <Link to="/">
+          <img src={coincontrol} alt="logo" className=" h-16 " />
+        </Link>
 
         <img src={signin} alt="" />
       </div>
@@ -52,7 +78,7 @@ const LoginPage = () => {
         <p>Start managing your finance faster and better.</p>
 
         <form>
-        <div className="mb-4 relative">
+          <div className="mb-4 relative">
             <label htmlFor="email" className="sr-only">
               Email
             </label>
@@ -62,7 +88,7 @@ const LoginPage = () => {
                 type="email"
                 id="email"
                 placeholder="Enter your email"
-                className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                className="w-full p-2 pl-10 bg-[#F2F2F2] border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                 onChange={(e) =>
                   setFormState({ ...formState, email: e.target.value })
                 }
@@ -81,7 +107,7 @@ const LoginPage = () => {
                 type="password"
                 id="password"
                 placeholder="Enter your password"
-                className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                className="w-full p-2 pl-10 bg-[#F2F2F2] border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                 value={formState.password}
                 onChange={(e) =>
                   setFormState({ ...formState, password: e.target.value })
@@ -104,22 +130,24 @@ const LoginPage = () => {
               Remember me
             </label>
           </div>
-
+          {errors && (
+            <div className="text-red-500 text-sm mt-2">{errors.message}</div>
+          )}
           <button
             type="button"
             onClick={handleLogin}
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full hover:bg-[#EE6338] text-black p-2 rounded-md  focus:outline-none focus:ring focus:border-blue-300"
           >
             Login
           </button>
 
           <div className="mt-4">
             {/* Placeholder image and text */}
-            <p className="text-center text-gray-600">Or sign in with</p>
+            <p className="text-center text-gray-600">Or</p>
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="w-full bg-red-500 text-white p-2 rounded-md mt-2 hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300"
+              className="w-full bg-[#F2F2F2] text-black p-2 rounded-md mt-2 hover:bg-[#EE6338] focus:outline-none focus:ring focus:border-red-300"
             >
               Sign in with Google
             </button>
@@ -128,13 +156,16 @@ const LoginPage = () => {
 
         <p className="mt-4 text-center text-gray-600">
           Don't have an account?{" "}
-          <button
-            type="button"
-            onClick={handleSignup}
-            className="text-blue-500 hover:underline focus:outline-none"
-          >
-            Sign up
-          </button>
+          <Link to="/signup">
+            {" "}
+            <button
+              type="button"
+              onClick={handleSignup}
+              className="text-blue-500 hover:underline focus:outline-none hover:text-[#EE6338]"
+            >
+              Sign up
+            </button>
+          </Link>
         </p>
       </div>
     </div>

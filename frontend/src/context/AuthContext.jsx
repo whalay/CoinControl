@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect,  } from "react";
-import axios from "axios";
+// import axios from "axios";
 
 // Create the AuthContext
 const AuthContext = createContext();
@@ -7,6 +7,8 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [errors, setErrors] = useState({}); // New state for errors
+
   
     // Check for stored token during component initialization
     useEffect(() => {
@@ -18,22 +20,21 @@ export const AuthProvider = ({ children }) => {
     }
     }, []);
 
-  const login = async (userData) => {
+  const login = async (response) => {
 
-    try {
+    // try {
       // Assuming you have a backend API endpoint for user authentication
-      const response = await axios.post(
-        "http://127.0.0.1:5000/api/v1/login",
-        userData
-      );
+      // const response = await axios.post(
+      //   "http://127.0.0.1:5000/api/v1/login",
+      //   userData
+      // );
 
       // If authentication is successful, set the user data in the state
       setUser(response.data.data);
       setIsLoggedIn(true);
       // console.log(response.data.data);
 
-      // Optionally, you might want to save a token to manage user sessions
-      // For example, if your server returns a token upon successful login
+    
       // You can save it in local storage or a cookie
       localStorage.setItem("accessToken", response.data.data.access_token);
       localStorage.setItem('userData', JSON.stringify(response.data.data));
@@ -41,19 +42,22 @@ export const AuthProvider = ({ children }) => {
       // console.log(response.data.data.access_token);
       // navigate('/dashboard');
       // window.location.href = "/dashboard";
-    } catch (error) {
-      // Handle login failure
-      console.error("Login failed:", error);
+    // } catch (error) {
+    //   // Handle login failure
+    //   console.error("Login failed:", error);
+    //   console.error("Login failed:", error.response);
+    //   console.error("Login failed:", error);
 
-      // Optionally, you can throw an error or show an error message
-      throw new Error("Login failed");
-    }
+    //   setErrors(error);
+
+    //   // Optionally, you can throw an error or show an error message
+    //   throw new Error("Login failed");
+    // }
   };
 
   const logout = () => {
     // Clear user data from the state
-    axios.post(
-      "http://127.0.0.1:5000/api/v1/logout");
+
     setUser(null);
     setIsLoggedIn(false);
 
@@ -67,7 +71,8 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-    isLoggedIn
+    isLoggedIn,
+    // errors
   };
 
   return (
