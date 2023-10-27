@@ -18,6 +18,7 @@ auth = HTTPBasicAuth()
 
 
 class Register(Resource):
+    
     @monitor
     def post(self):
         # app login written here
@@ -82,6 +83,7 @@ class Register(Resource):
             
             return response, 500
         
+
 api.add_resource(Register, "/register")
 
 
