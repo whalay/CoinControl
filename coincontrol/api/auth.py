@@ -1,20 +1,28 @@
-from flask_httpauth import HTTPBasicAuth
+from flask import Blueprint, request, jsonify, make_response
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    current_user,
+    get_jwt,
+    jwt_required,
+    set_access_cookies,
+    unset_jwt_cookies,
+)
 from flask_restful import Api, Resource
-from .decorators import monitor
-from flask import Blueprint, request
-from flask_jwt_extended import create_access_token, create_refresh_token , jwt_required, get_jwt, get_jwt_identity
-from coincontrol.forms import RegistrationForm, LoginForm
-from coincontrol.models import Users
-from coincontrol.extensions import db, bcrypt
-from coincontrol.api.blacklist import BLACKLIST
-from http import HTTPStatus
+from coincontrol.helpers import set_cookie
 
+from coincontrol.api.blacklist import BLACKLIST
+from coincontrol.extensions import bcrypt, db
+from coincontrol.forms import LoginForm, RegistrationForm
+from coincontrol.models import Users
+
+from .decorators import monitor
 
 api_auth_bp = Blueprint("api_auth_bp", __name__)
 api = Api(api_auth_bp, prefix="/api/v1")
 
+
 class Register(Resource):
-    
     @monitor
     def post(self):
         # app login written here
@@ -40,18 +48,13 @@ class Register(Resource):
 
                 user = Users(username=username, email=email, password=password)
                 user.generate_password_hash(password)
-                access_token = create_access_token(identity=)
                 db.session.add(user)
                 db.session.commit()
 
                 response = {
                     "status": 201,
                     "message": "User created sucessfully",
-                    "data": {
-                        "status": "success",
-                        "username": username, 
-                        "email": email
-                    }
+                    "data": {"status": "success", "username": username, "email": email},
                 }
 
                 return response, 201
@@ -67,19 +70,15 @@ class Register(Resource):
 
                 return response, 400
 
-            
         except Exception as e:
             response = {
-            "status": 500,
-            "message": "Internal server error",
-                "data": {
-                "status": "failed",
-                "error": str(e)
-                },
+                "status": 500,
+                "message": "Internal server error",
+                "data": {"status": "failed", "error": str(e)},
             }
-            
+
             return response, 500
-        
+
 
 api.add_resource(Register, "/register")
 
@@ -94,41 +93,34 @@ class Login(Resource):
             password = user_data.get("password")
 
             form = LoginForm()
-            
+
             if form.validate():
                 form.email.data = email
                 form.password.data = password
-                
-                email = form.email.data 
+
+                email = form.email.data
                 password = form.password.data
 
-            
                 user = Users.query.filter_by(email=email).first()
 
                 if not user:
                     response = {
                         "status": 404,
                         "message": "This user does not exist",
-                        "data": {
-                            "status": "failed",
-                            "error": "Invalid credentials"
-                        }
+                        "data": {"status": "failed", "error": "Invalid credentials"},
                     }
                     return response, 404
-
+                
                 if not bcrypt.check_password_hash(user.password, password):
                     response = {
                         "status": 401,
                         "message": "Invalid password for this account, password might be case sensitive",
-                        "data": {
-                            "status": "failed",
-                            "error": "Invalid credentials"
-                        },
+                        "data": {"status": "failed", "error": "Invalid credentials"},
                     }
                     return response, 401
-                
-                access_token = create_access_token(identity=email)
-                refresh_token = create_refresh_token(identity=email)
+
+                access_token = create_access_token(identity=user)
+                refresh_token = create_refresh_token(identity=user)
 
                 response = {
                     "status": 200,
@@ -141,60 +133,58 @@ class Login(Resource):
                         "refresh_token": refresh_token,
                     },
                 }
-                
-            
+                # response = make_response(response)
+                # response = set_cookie(response, access_token)
                 return response, 200
-
+               
         except Exception as e:
             response = {
-            "status": 500,
-            "message": "Internal server error",
-                "data": {
-                "status": "failed",
-                "error": str(e)
-                },
+                "status": 500,
+                "message": "Internal server error",
+                "data": {"status": "failed", "error": str(e)},
             }
-            
+            print(e)
             return response, 500
+
 
 api.add_resource(Login, "/login")
 
 
-
 class LoginOut(Resource):
-    
     @jwt_required()
     @monitor
     def post(self):
         # app login written here
         jwt_token = get_jwt()["jti"]
         BLACKLIST.add(jwt_token)
-    
         response = {
-        "status": 200,
-        "message": "You have been logged Out successfully",
+            "status": 200,
+            "message": "You have been logged Out successfully",
         }
-       
+        unset_jwt_cookies(response)
         return response, 200
 
 
 api.add_resource(LoginOut, "/logout")
 
+
 class RefreshToken(Resource):
-    
     @jwt_required(refresh=True)
     @monitor
     def post(self):
-        identity = get_jwt_identity()
-        access_token = create_access_token(identity=identity)
+        access_token = create_access_token(identity=current_user)
         response = {
             "status": 200,
             "message": "Access token created successfully",
             "data": {
                 "status": "success",
-                "access_token": access_token
+                "access_token": access_token,
+                "id": current_user.user_id,
+                "username": current_user.username,
+                "email": current_user.email,
             },
         }
         return response, 200
-        
+
+
 api.add_resource(RefreshToken, "/refresh")

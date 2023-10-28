@@ -45,10 +45,18 @@ def create_app(config_name="development"):
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=1)
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
     app.config["REMEMBER_COOKIE_DURATION"] = timedelta(hours=1)
+    app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies", "json", "query_string"]
+    app.config["JWT_COOKIE_SECURE"] = False
+    app.config["JWT_SESSION_COOKIE"] = timedelta(hours=1)
 
     @jwt.user_identity_loader
     def user_identity_lookup(user):
         return user.user_id
+    
+    @jwt.user_lookup_loader
+    def user_lookup_callback(_jwt_header, jwt_data):
+        identity = jwt_data["sub"]
+        return Users.query.filter_by(user_id=identity).one_or_none()
 
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blocklist(jwt_header, jwt_payload):
