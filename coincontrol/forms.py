@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, FloatField
 from wtforms.validators import (
     DataRequired,
     Length,
@@ -97,11 +97,10 @@ class EmailForm(FlaskForm):
         
         
 class IncomeForm(FlaskForm):
-    user_id = IntegerField('User ID', validators=[DataRequired()])
-    amount = IntegerField('Amount', validators=[DataRequired()])
+    amount = FloatField('Amount', validators=[DataRequired()])
 
 
 class BudgetForm(FlaskForm):
     user_id = IntegerField('User ID', validators=[DataRequired()])
-    amount = IntegerField('Amount', validators=[DataRequired()])
+    amount = FloatField('Amount', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])

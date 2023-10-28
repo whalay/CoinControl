@@ -1,10 +1,9 @@
 from flask import Blueprint
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import current_user, jwt_required
 from flask_restful import Api, Resource, request
-from flask_jwt_extended import current_user
 
 from coincontrol.extensions import db
-from coincontrol.forms import IncomeForm, BudgetForm
+from coincontrol.forms import BudgetForm, IncomeForm
 from coincontrol.models import Budgets, Expenses, Incomes
 
 from .decorators import monitor
@@ -17,7 +16,7 @@ class UserDashboard(Resource):
     response = {"status": 400}
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         pass
@@ -30,13 +29,13 @@ class UserExpenses(Resource):
     response = {"status": 400}
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         pass
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def post(self):
         # app logic written here
         pass
@@ -49,19 +48,19 @@ class UserExpensesById(Resource):
     response = {"status": 400}
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         pass
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def put(self):
         # app logic written here
         pass
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def delete(self):
         # app logic written here
         pass
@@ -72,66 +71,70 @@ api.add_resource(UserExpensesById, "/expenses/<int:id>")
 
 class UserIncome(Resource):
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         try:
-            income = Incomes.query.filter_by(user_id=current_user.user.id).first()
+            income = Incomes.query.filter_by(user_id=current_user.user_id).first()
             if income:
                 response = {
                     "status": 200,
                     "message": "Income fetched successfully",
-                    "data": {
-                        "status": "success",
-                        "income": income.amount
-                    }
+                    "data": {"status": "success", "income": income.amount},
                 }
                 return response, 200
             else:
                 response = {
-                    "status": 400,
+                    "status": 200,
                     "message": "No income found",
                     "data": {
-                        "status": "failed",
-                    }
+                        "status": "success",
+                    },
                 }
-                return response, 400
+                return response, 200
         except Exception as e:
-            print(e) 
+            print(e)
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def post(self):
         # app logic written here
         try:
             user_data = request.get_json()
-            amount = user_data.get("amount", "")
-            print(amount)
+            amount = float(user_data.get("amount", ""))
+            existing_user_income = Incomes.query.filter_by(
+                user_id=current_user.user_id
+            ).first()
+            if existing_user_income:
+                response = {
+                    "status": 400,
+                    "message": "User Income already exists",
+                    "data": {
+                        "status": "failed",
+                    },
+                }
+                return response, 400
             form = IncomeForm()
             if form.validate():
                 form.amount.data = amount
                 amount = form.amount.data
-                print(amount)
                 income = Incomes(user_id=current_user.user_id, amount=amount)
                 db.session.add(income)
-                db.commit()
+                db.session.commit()
                 response = {
-                    "status": 200,
+                    "status": 201,
                     "message": "Income added successfully",
-                    "data": {
-                        "status": "success",
-                        "amount": amount
-                    }
+                    "data": {"status": "success", "amount": amount},
                 }
-                return response, 200
+                return response, 201
             else:
                 response = {
                     "status": 400,
                     "message": "Invalid form data",
                     "data": {
                         "status": "failed",
-                        "error": form.errors ,
-                    }
+                        "error": form.errors,
+                    },
                 }
                 return response, 400
         except Exception as e:
@@ -140,52 +143,51 @@ class UserIncome(Resource):
 
 api.add_resource(UserIncome, "/income")
 
+
 class UserBudgets(Resource):
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         try:
             budgets = Budgets.query.filter_by(user_id=current_user.user_id).first()
-            print(budgets)
             if budgets:
                 response = {
                     "status": 200,
                     "message": "Budgets fetched successfully",
                     "data": {
                         "status": "success",
-                        "id": budgets.id,
-                        "name":budgets.name,
-                        "amount":budgets.amount,
-                        "date_created":budgets.date_created,
-                        "date_ended":budgets.date_ended
-                    }
+                        "id": budgets.budget_id,
+                        "name": budgets.name,
+                        "amount": budgets.amount,
+                        # "date_created": budgets.date_created,
+                        # "date_ended": budgets.date_ended,
+                    },
                 }
                 return response, 200
             else:
                 response = {
-                    "status": 400,
+                    "status": 200,
                     "message": "No budgets found",
                     "data": {
-                        "status": "failed",
-                    }
+                        "status": "success",
+                    },
                 }
-                return response, 400
+                return response, 200
         except Exception as e:
             print(e)
-        
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def post(self):
         # app logic written here
         try:
             user_data = request.get_json()
-            name = user_data['name']
-            amount = user_data['amount']
+            name = user_data.get("name", "")
+            amount = float(user_data.get("amount", ""))
             form = BudgetForm()
             if amount:
-                income = Income.query.filter_by(user_id=current_user.user_id).first()
+                income = Incomes.query.filter_by(user_id=current_user.user_id).first()
                 if income is not None:
                     if income.amount < amount:
                         response = {
@@ -193,37 +195,33 @@ class UserBudgets(Resource):
                             "message": "Insufficient balance",
                             "data": {
                                 "status": "failed",
-                            }
+                            },
                         }
                         return response, 400
-                    
+
             if form.validate:
                 amount, name = form.amount.data, form.name.data
-                budget = Budgets(user_id=current_user.user_id,  name=name, amount=amount)
-                db.sesion.add(budget)
+                budget = Budgets(user_id=current_user.user_id, name=name, amount=amount)
+                db.session.add(budget)
                 db.session.commit()
                 response = {
-                    "status":200,
+                    "status": 201,
                     "message": "Budget added successfully",
-                    "data":{
-                        "status":"sucess",
-                        "name":name,
-                        "amount":amount
-                    }
+                    "data": {"status": "sucess", "name": name, "amount": amount},
                 }
-                return response, 200
+                return response, 201
             else:
                 response = {
-                    "status":400,
+                    "status": 400,
                     "message": "Invalid form data",
-                    "data":{
-                        "status":"failed",
-                        "error":form.errors,
-                    }
+                    "data": {
+                        "status": "failed",
+                        "error": form.errors,
+                    },
                 }
         except Exception as e:
             print(e)
-    
+
 
 api.add_resource(UserBudgets, "/budgets")
 
@@ -232,19 +230,19 @@ class UserBudgetsById(Resource):
     response = {"status": 400}
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         pass
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def put(self):
         # app logic written here
         pass
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def delete(self):
         # app logic written here
         pass
@@ -258,7 +256,7 @@ class UserExpensesReport(Resource):
     response = {"status": 400}
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         pass
@@ -271,7 +269,7 @@ class UserIncomeReport(Resource):
     response = {"status": 400}
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         pass
@@ -284,7 +282,7 @@ class UserBudgetsReport(Resource):
     response = {"status": 400}
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         pass
@@ -298,13 +296,13 @@ class UserProfile(Resource):
     response = {"status": 400}
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def get(self):
         # app logic written here
         pass
 
     @monitor
-    @jwt_required(refresh=True)
+    @jwt_required(fresh=True)
     def put(self):
         # app logic written here
         pass

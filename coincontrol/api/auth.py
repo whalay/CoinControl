@@ -119,7 +119,7 @@ class Login(Resource):
                     }
                     return response, 401
 
-                access_token = create_access_token(identity=user)
+                access_token = create_access_token(identity=user, fresh=True)
                 refresh_token = create_refresh_token(identity=user)
 
                 response = {
@@ -161,7 +161,7 @@ class LoginOut(Resource):
             "status": 200,
             "message": "You have been logged Out successfully",
         }
-        unset_jwt_cookies(response)
+        # unset_jwt_cookies(response)
         return response, 200
 
 
@@ -172,7 +172,7 @@ class RefreshToken(Resource):
     @jwt_required(refresh=True)
     @monitor
     def post(self):
-        access_token = create_access_token(identity=current_user)
+        access_token = create_access_token(identity=current_user, fresh=True)
         response = {
             "status": 200,
             "message": "Access token created successfully",
