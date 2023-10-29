@@ -41,7 +41,7 @@ def create_app(config_name="development"):
     
     # initialize jwt
     jwt.init_app(app)
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=1)
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
     app.config["REMEMBER_COOKIE_DURATION"] = timedelta(hours=1)

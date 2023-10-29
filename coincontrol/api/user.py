@@ -85,13 +85,10 @@ class UserIncome(Resource):
                 return response, 200
             else:
                 response = {
-                    "status": 200,
+                    "status": 404,
                     "message": "No income found",
-                    "data": {
-                        "status": "success",
-                    },
                 }
-                return response, 200
+                return response, 404
         except Exception as e:
             print(e)
 
@@ -107,13 +104,10 @@ class UserIncome(Resource):
             ).first()
             if existing_user_income:
                 response = {
-                    "status": 400,
+                    "status": 409,
                     "message": "User Income already exists",
-                    "data": {
-                        "status": "failed",
-                    },
                 }
-                return response, 400
+                return response, 409
             form = IncomeForm()
             if form.validate():
                 form.amount.data = amount
@@ -150,21 +144,40 @@ class UserBudgets(Resource):
     def get(self):
         # app logic written here
         try:
-            budgets = Budgets.query.filter_by(user_id=current_user.user_id).first()
-            if budgets:
-                response = {
-                    "status": 200,
-                    "message": "Budgets fetched successfully",
-                    "data": {
-                        "status": "success",
-                        "id": budgets.budget_id,
-                        "name": budgets.name,
-                        "amount": budgets.amount,
-                        # "date_created": budgets.date_created,
-                        # "date_ended": budgets.date_ended,
-                    },
-                }
-                return response, 200
+            page = request.args.get('page', 1, type=int)
+            per_page = request.args.get('per_page', 5, type=int)
+            budgets = Budgets.query.filter_by(user_id=current_user.user_id).paginate(
+                page=page, per_page=per_page
+            )
+            data = []
+            for budget in budgets.items:
+                data.append({
+                    
+                })
+            # meta = {
+            #         "page": budgets.page,
+            #         "pages": budgets.pages,
+            #         "total_count": budgets.total,
+            #         "prev_page": budgets.prev_num,
+            #         "next_page": budgets.next_num,
+            #         "has_next": budgets.has_next,
+            #         "has_prev": budgets.has_prev,
+            # },
+            # if budgets:
+            #     for budget in budgets.items:
+            #         response = {
+            #             "status": 200,
+            #             "message": "Budgets fetched successfully",
+            #             "data": {
+            #                 "status": "success",
+            #                 "id": budget.budget_id,
+            #                 "name": budget.name,
+            #                 "amount": budget.amount,
+            #                 "date_created":budget.date_created.strftime('%Y-%m-%d'),
+            #             },
+            #             "meta": meta
+            #         }
+            #         return response, 200
             else:
                 response = {
                     "status": 200,
@@ -185,9 +198,9 @@ class UserBudgets(Resource):
             user_data = request.get_json()
             name = user_data.get("name", "")
             amount = float(user_data.get("amount", ""))
+            income = Incomes.query.filter_by(user_id=current_user.user_id).first()
             form = BudgetForm()
             if amount:
-                income = Incomes.query.filter_by(user_id=current_user.user_id).first()
                 if income is not None:
                     if income.amount < amount:
                         response = {
@@ -200,8 +213,9 @@ class UserBudgets(Resource):
                         return response, 400
 
             if form.validate:
-                amount, name = form.amount.data, form.name.data
+                amount, name = form.amount.data, form.name.data.lower().strip()
                 budget = Budgets(user_id=current_user.user_id, name=name, amount=amount)
+                income.amount -= amount
                 db.session.add(budget)
                 db.session.commit()
                 response = {
@@ -219,6 +233,8 @@ class UserBudgets(Resource):
                         "error": form.errors,
                     },
                 }
+                return response, 400
+
         except Exception as e:
             print(e)
 
