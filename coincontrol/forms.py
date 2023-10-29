@@ -8,7 +8,7 @@ from wtforms.validators import (
     ValidationError,
     Regexp,
 )
-from coincontrol.models import Users
+from coincontrol.models import Users, Budgets
 import email_validator
 
 
@@ -99,8 +99,11 @@ class EmailForm(FlaskForm):
 class IncomeForm(FlaskForm):
     amount = FloatField('Amount', validators=[DataRequired()])
 
-
 class BudgetForm(FlaskForm):
-    user_id = IntegerField('User ID', validators=[DataRequired()])
     amount = FloatField('Amount', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
+    
+    def validate_name(self, name):
+        budget = Budgets.query.filter_by(name=name.data.lower()).first()
+        if budget:
+            raise ValidationError('Budget name already exists')

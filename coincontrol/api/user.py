@@ -144,40 +144,38 @@ class UserBudgets(Resource):
     def get(self):
         # app logic written here
         try:
-            page = request.args.get('page', 1, type=int)
-            per_page = request.args.get('per_page', 5, type=int)
+            page = request.args.get("page", 1, type=int)
+            per_page = request.args.get("per_page", 2, type=int)
             budgets = Budgets.query.filter_by(user_id=current_user.user_id).paginate(
                 page=page, per_page=per_page
             )
-            data = []
-            for budget in budgets.items:
-                data.append({
-                    
-                })
-            # meta = {
-            #         "page": budgets.page,
-            #         "pages": budgets.pages,
-            #         "total_count": budgets.total,
-            #         "prev_page": budgets.prev_num,
-            #         "next_page": budgets.next_num,
-            #         "has_next": budgets.has_next,
-            #         "has_prev": budgets.has_prev,
-            # },
-            # if budgets:
-            #     for budget in budgets.items:
-            #         response = {
-            #             "status": 200,
-            #             "message": "Budgets fetched successfully",
-            #             "data": {
-            #                 "status": "success",
-            #                 "id": budget.budget_id,
-            #                 "name": budget.name,
-            #                 "amount": budget.amount,
-            #                 "date_created":budget.date_created.strftime('%Y-%m-%d'),
-            #             },
-            #             "meta": meta
-            #         }
-            #         return response, 200
+            if budgets:
+                data = []
+                for budget in budgets.items:
+                    data.append(
+                        {
+                            "id": budget.budget_id,
+                            "name": budget.name,
+                            "amount": budget.amount,
+                            "date_created": budget.date_created.strftime("%Y-%m-%d"),
+                        }
+                    )
+                meta = {
+                    "page": budgets.page,
+                    "pages": budgets.pages,
+                    "total_count": budgets.total,
+                    "prev_page": budgets.prev_num,
+                    "next_page": budgets.next_num,
+                    "has_next": budgets.has_next,
+                    "has_prev": budgets.has_prev,
+                }
+                response = {
+                    "status": 200,
+                    "message": "Budgets fetched successfully",
+                    "data": {"status": "success", "data": data},
+                    "meta": meta,
+                }
+                return response, 200
             else:
                 response = {
                     "status": 200,
