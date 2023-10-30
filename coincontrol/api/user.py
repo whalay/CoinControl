@@ -152,7 +152,11 @@ class UserIncome(Resource):
                 response = {
                     "status": 201,
                     "message": "Income top up successfull",
-                    "data": {"status": "success", "amount": amount},
+                    "data": {
+                        "status": "success", 
+                        "amount": amount,
+                        "available_balance": existing_user_income.amount
+                    },
                 }
                 return response, 201
             else:
