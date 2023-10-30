@@ -3,8 +3,8 @@ from flask_jwt_extended import current_user, jwt_required
 from flask_restful import Api, Resource, request
 
 from coincontrol.extensions import db
-from coincontrol.forms import BudgetForm, IncomeForm
-from coincontrol.models import Budgets, Expenses, Incomes
+from coincontrol.forms import BudgetForm, EditProfileForm, IncomeForm
+from coincontrol.models import Budgets, Expenses, Incomes, Users
 
 from .decorators import monitor
 
@@ -134,6 +134,40 @@ class UserIncome(Resource):
         except Exception as e:
             print(e)
 
+    @monitor
+    @jwt_required(fresh=True)
+    def put(self):
+        # app logic written here
+        try:
+            user_data = request.get_json()
+            amount = float(user_data.get("amount", ""))
+            form = IncomeForm()
+            if form.validate():
+                amount = form.amount.data
+                existing_user_income = Incomes.query.filter_by(
+                    user_id=current_user.user_id
+                ).first()
+                existing_user_income.amount += amount
+                db.session.commit()
+                response = {
+                    "status": 201,
+                    "message": "Income top up successfull",
+                    "data": {"status": "success", "amount": amount},
+                }
+                return response, 201
+            else:
+                response = {
+                    "status": 400,
+                    "message": "Income top up failed",
+                    "data": {
+                        "status": "failed",
+                        "error": form.errors,
+                    },
+                }
+                return response, 400
+        except Exception as e:
+            print(e)
+
 
 api.add_resource(UserIncome, "/income")
 
@@ -210,8 +244,11 @@ class UserBudgets(Resource):
                         }
                         return response, 400
 
-            if form.validate:
-                amount, name = form.amount.data, form.name.data.lower().strip()
+            if form.validate():
+                name, amount = (
+                    form.name.data.strip().replace(" ", "-").lower(),
+                    form.amount.data,
+                )
                 budget = Budgets(user_id=current_user.user_id, name=name, amount=amount)
                 income.amount -= amount
                 db.session.add(budget)
@@ -241,85 +278,100 @@ api.add_resource(UserBudgets, "/budgets")
 
 
 class UserBudgetsById(Resource):
-    response = {"status": 400}
+    @monitor
+    @jwt_required(fresh=True)
+    def get(self, id):
+        # app logic written here
+        try:
+            budget = Budgets.query.filter_by(
+                budget_id=id, user_id=current_user.user_id
+            ).first()
+            if budget is not None:
+                response = {
+                    "status": 200,
+                    "message": "Budget fetched successfully",
+                    "data": {
+                        "status": "success",
+                        "id": budget.budget_id,
+                        "user_id": budget.user_id,
+                        "name": budget.name,
+                        "date_created": budget.date_created.strftime("%Y-%m-%d"),
+                    },
+                }
+                return response, 200
+            else:
+                response = {
+                    "status": 404,
+                    "message": "Budget not found",
+                }
+                return response, 404
+        except Exception as e:
+            print(e)
 
     @monitor
     @jwt_required(fresh=True)
-    def get(self):
+    def put(self, id):
         # app logic written here
-        pass
+        try:
+            budget = Budgets.query.filter_by(
+                budget_id=id, user_id=current_user.user_id
+            ).first()
+            if budget is not None:
+                user_data = request.get_json()
+                name = user_data.get("name", "")
+                amount = float(user_data.get("amount", ""))
+                form = BudgetForm()
+                if form.validate():
+                    name, amount = (
+                        form.name.data.strip().replace(" ", "-").lower(),
+                        form.amount.data,
+                    )
+                    budget.name, budget.amount = name, amount
+                    db.session.commit()
+                    response = {
+                        "status": 200,
+                        "message": "Budget updated successfully",
+                        "data": {
+                            "status": "success",
+                            "name": name,
+                            "amount": amount,
+                        },
+                    }
+                    return response, 200
+                else:
+                    response = {
+                        "status": 400,
+                        "message": "Invalid form data",
+                        "data": {
+                            "status": "failed",
+                            "error": form.errors,
+                        },
+                    }
+                    return response, 400
+            else:
+                response = {"status": 404, "message": "Budget not found"}
+                return response, 404
+        except Exception as e:
+            print(e)
 
     @monitor
     @jwt_required(fresh=True)
-    def put(self):
+    def delete(self, id):
         # app logic written here
-        pass
-
-    @monitor
-    @jwt_required(fresh=True)
-    def delete(self):
-        # app logic written here
-        pass
+        try:
+            budget = Budgets.query.filter_by(
+                budget_id=id, user_id=current_user.user_id
+            ).first()
+            if budget is not None:
+                db.session.delete(budget)
+                db.session.commit()
+                response = {"status": 200, "message": "Budget deleted successfully"}
+                return response, 200
+            else:
+                response = {"status": 404, "message": "Budget not found"}
+                return response, 404
+        except Exception as e:
+            print(e)
 
 
 api.add_resource(UserBudgetsById, "/budgets/<int:id>")
-
-
-# Report management
-class UserExpensesReport(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    def get(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(UserExpensesReport, "/reports/expenses")
-
-
-class UserIncomeReport(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    def get(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(UserIncomeReport, "/reports/income")
-
-
-class UserBudgetsReport(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    def get(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(UserBudgetsReport, "/reports/budgets")
-
-
-# Account management
-class UserProfile(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    def get(self):
-        # app logic written here
-        pass
-
-    @monitor
-    @jwt_required(fresh=True)
-    def put(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(UserProfile, "/profile")

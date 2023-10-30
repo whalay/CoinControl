@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -9,11 +9,11 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
 )
 from flask_restful import Api, Resource
-from coincontrol.helpers import set_cookie
 
 from coincontrol.api.blacklist import BLACKLIST
 from coincontrol.extensions import bcrypt, db
 from coincontrol.forms import LoginForm, RegistrationForm
+from coincontrol.helpers import set_cookie
 from coincontrol.models import Users
 
 from .decorators import monitor
@@ -36,28 +36,24 @@ class Register(Resource):
             form = RegistrationForm()
 
             if form.validate():
-                form.username.data = username
-                form.email.data = email
-                form.password.data = password
-                form.confirm_password.data = confirm_password
-
-                username = form.username.data
-                email = form.email.data
-                password = form.password.data
-                confirm_password = form.confirm_password.data
-
-                user = Users(username=username, email=email, password=password)
-                user.generate_password_hash(password)
-                db.session.add(user)
-                db.session.commit()
-
-                response = {
-                    "status": 201,
-                    "message": "User created sucessfully",
-                    "data": {"status": "success", "username": username, "email": email},
-                }
-
-                return response, 201
+                username, email, password, confirm_password = (
+                    form.username.data,
+                    form.email.data,
+                    form.password.data,
+                    form.confirm_password.data,
+                )
+                
+                if username and email and password and confirm_password:
+                    user = Users(username=username, email=email, password=password)
+                    user.generate_password_hash(password)
+                    db.session.add(user)
+                    db.session.commit()
+                    response = {
+                        "status": 201,
+                        "message": "User created sucessfully",
+                        "data": {"status": "success", "username": username, "email": email},
+                    }
+                    return response, 201
             else:
                 response = {
                     "status": 400,
@@ -110,7 +106,7 @@ class Login(Resource):
                         "data": {"status": "failed", "error": "Invalid credentials"},
                     }
                     return response, 404
-                
+
                 if not bcrypt.check_password_hash(user.password, password):
                     response = {
                         "status": 401,
@@ -136,7 +132,7 @@ class Login(Resource):
                 # response = make_response(response)
                 # response = set_cookie(response, access_token)
                 return response, 200
-               
+
         except Exception as e:
             response = {
                 "status": 500,
@@ -188,3 +184,84 @@ class RefreshToken(Resource):
 
 
 api.add_resource(RefreshToken, "/refresh")
+
+
+# Account management
+class UserProfile(Resource):
+    @monitor
+    @jwt_required(fresh=True)
+    def get(self):
+        # app logic written here
+        try:
+            user = Users.query.filter_by(user_id=current_user.user_id).first()
+            if user is not None:
+                response = {
+                    "status": 200,
+                    "message": "User profile fetched successfully",
+                    "data": {
+                        "status": "success",
+                        "name": user.username,
+                        "email": user.email,
+                    },
+                }
+                return response, 200
+            else:
+                response = {
+                    "status": 404,
+                    "message": "User not found",
+                    "data": {
+                        "status": "failed",
+                    },
+                }
+                return response, 404
+        except Exception as e:
+            print(e)
+
+    @monitor
+    @jwt_required(fresh=True)
+    def put(self):
+        # app logic written here
+        try:
+            user_data = request.get_json()
+            username = user_data.get("username", "")
+            email = user_data.get("email", "")
+            password = user_data.get("password", "")
+            confirm_password = user_data.get("confirm_password", "")
+            user = Users.query.filter_by(user_id=current_user.user_id).first()
+            form = RegistrationForm()
+            if form.validate():
+                username, email, password, confirm_password = (
+                    form.username.data,
+                    form.email.data,
+                    form.password.data,
+                    form.confirm_password.data,
+                )
+                if username and email and password and confirm_password:
+                    user.username, user.email = username, email
+                    user.generate_password_hash(password)
+                    db.session.commit()
+                    response = {
+                        "status": 200,
+                        "message": "User profile updated successfully",
+                        "data": {
+                            "status": "success",
+                            "username": user.username,
+                            "email": user.email,
+                        },
+                    }
+                    return response, 200
+            else:
+                response = {
+                    "status": 400,
+                    "message": "Profile Update failed",
+                    "data": {
+                        "status": "failed",
+                        "error": form.errors,
+                    },
+                }
+                return response, 400
+        except Exception as e:
+            print(e)
+
+
+api.add_resource(UserProfile, "/user/profile")
