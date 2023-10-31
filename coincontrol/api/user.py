@@ -2,11 +2,10 @@ from flask import Blueprint
 from flask_jwt_extended import current_user, jwt_required
 from flask_restful import Api, Resource, request
 
+from coincontrol.api.decorators import monitor, user_required
 from coincontrol.extensions import db
 from coincontrol.forms import BudgetForm, ExpenseForm, IncomeForm
 from coincontrol.models import Budgets, Expenses, Incomes
-
-from .decorators import monitor
 
 api_user_bp = Blueprint("api_user_bp", __name__)
 api = Api(api_user_bp, prefix="/api/v1")
@@ -17,9 +16,11 @@ class UserDashboard(Resource):
 
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def get(self):
         # app logic written here
         pass
+
 
 api.add_resource(UserDashboard, "/dashboard")
 
@@ -27,6 +28,7 @@ api.add_resource(UserDashboard, "/dashboard")
 class UserExpenses(Resource):
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def get(self):
         # app logic written here
         try:
@@ -43,12 +45,12 @@ class UserExpenses(Resource):
                             "expense_id": expense.expenses_id,
                             "user_id": expense.user_id,
                             "budget_id": expense.budget_id,
-                            "amount":expense.amount,
+                            "amount": expense.amount,
                             "description": expense.description,
                             "transaction_type": expense.transaction_type,
-                            "account_number":expense.account_number,
-                            "bank_name":expense.bank_name,
-                            "date_created": expense.date_created.strftime("%Y-%m-%d")
+                            "account_number": expense.account_number,
+                            "bank_name": expense.bank_name,
+                            "date_created": expense.date_created.strftime("%Y-%m-%d"),
                         }
                     )
                 meta = {
@@ -61,22 +63,19 @@ class UserExpenses(Resource):
                     "has_prev": expenses.has_prev,
                 }
                 response = {
-                    "status":200,
-                    "message":"Expenses fetched successfully",
-                    "data":{
-                        "status":"success",
-                        "data": data
-                    },
-                    "meta":meta
+                    "status": 200,
+                    "message": "Expenses fetched successfully",
+                    "data": {"status": "success", "data": data},
+                    "meta": meta,
                 }
                 return response, 200
             else:
                 response = {
-                    "status":200,
-                    "message":"No Expenses found",
-                    "data":{
-                        "status":"success",
-                    }
+                    "status": 200,
+                    "message": "No Expenses found",
+                    "data": {
+                        "status": "success",
+                    },
                 }
                 return response, 200
         except Exception as e:
@@ -84,6 +83,7 @@ class UserExpenses(Resource):
 
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def post(self):
         # app logic written here
         try:
@@ -148,6 +148,7 @@ api.add_resource(UserExpenses, "/expenses")
 class UserIncome(Resource):
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def get(self):
         # app logic written here
         try:
@@ -170,6 +171,7 @@ class UserIncome(Resource):
 
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def post(self):
         # app logic written here
         try:
@@ -212,6 +214,7 @@ class UserIncome(Resource):
 
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def put(self):
         # app logic written here
         try:
@@ -255,6 +258,7 @@ api.add_resource(UserIncome, "/income")
 class UserBudgets(Resource):
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def get(self):
         # app logic written here
         try:
@@ -304,6 +308,7 @@ class UserBudgets(Resource):
 
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def post(self):
         # app logic written here
         try:
@@ -311,6 +316,7 @@ class UserBudgets(Resource):
             name = user_data.get("name", "")
             amount = float(user_data.get("amount", ""))
             income = Incomes.query.filter_by(user_id=current_user.user_id).first()
+            print(income)
             form = BudgetForm()
             if amount:
                 if income is not None:
@@ -331,6 +337,7 @@ class UserBudgets(Resource):
                 )
                 budget = Budgets(user_id=current_user.user_id, name=name, amount=amount)
                 income.amount -= amount
+
                 db.session.add(budget)
                 db.session.commit()
                 response = {
@@ -360,6 +367,7 @@ api.add_resource(UserBudgets, "/budgets")
 class UserBudgetsById(Resource):
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def get(self, id):
         # app logic written here
         try:
@@ -390,6 +398,7 @@ class UserBudgetsById(Resource):
 
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def put(self, id):
         # app logic written here
         try:
@@ -436,6 +445,7 @@ class UserBudgetsById(Resource):
 
     @monitor
     @jwt_required(fresh=True)
+    @user_required
     def delete(self, id):
         # app logic written here
         try:

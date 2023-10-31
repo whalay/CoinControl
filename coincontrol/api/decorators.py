@@ -29,3 +29,12 @@ def admin_required(function=None):
             return {"status": 403, "message": "Admin access only is required"}, 403
         return function(*args, **kwargs)
     return wrapper
+
+# decorator that only allow the normal user to assess the routes
+def  user_required(function=None):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.is_admin:
+            return {"status": 403, "message": "User access only is required"}, 403
+        return function(*args, **kwargs)
+    return wrapper
