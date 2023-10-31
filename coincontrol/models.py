@@ -1,9 +1,9 @@
-from coincontrol.extensions import db
 from datetime import datetime
-from coincontrol.extensions import bcrypt
-from flask_login import UserMixin
-from coincontrol.helpers import generate_uuid
 
+from flask_login import UserMixin
+
+from coincontrol.extensions import bcrypt, db
+from coincontrol.helpers import generate_uuid
 
 
 class Users(UserMixin, db.Model):
@@ -18,17 +18,14 @@ class Users(UserMixin, db.Model):
     date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     date_verified = db.Column(db.DateTime, index=True)
     budgets = db.relationship("Budgets", back_populates="users")
-    expenses =db.relationship("Expenses", back_populates="users")
+    expenses = db.relationship("Expenses", back_populates="users")
     incomes = db.relationship("Incomes", back_populates="users")
-    
-
 
     def generate_password_hash(self, password):
         self.password = bcrypt.generate_password_hash(password, 10)
-        
+
     def is_verified(self, token):
         self.verified = True
-        
 
     def get_id(self):
         try:
@@ -61,7 +58,7 @@ class Budgets(db.Model):
     date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     date_ended = db.Column(db.DateTime, index=True, nullable=True)
     users = db.relationship("Users", back_populates="budgets")
-
+    expenses = db.relationship("Expenses", back_populates="budget")
 
     def __refr__(self):
         return f"Budgets(user_id:{self.user_id}, amount:{self.amount})"
@@ -73,9 +70,13 @@ class Expenses(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     budget_id = db.Column(db.Integer, db.ForeignKey("budgets.budget_id"))
     amount = db.Column(db.Float, nullable=False)
-    date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     description = db.Column(db.Text, nullable=True)
+    account_number = db.Column(db.String(20), nullable=False)
+    bank_name = db.Column(db.String(20), nullable=False)
+    transaction_type = db.Column(db.String(20), nullable=False)
+    date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     users = db.relationship("Users", back_populates="expenses")
+    budget = db.relationship("Budgets", back_populates="expenses")
 
     def __refr__(self):
         return f"Expenses(user_id:{self.user_id}, budget_id:{self.budget_id}, amount:{self.amount})"

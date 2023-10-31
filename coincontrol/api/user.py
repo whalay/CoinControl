@@ -3,8 +3,8 @@ from flask_jwt_extended import current_user, jwt_required
 from flask_restful import Api, Resource, request
 
 from coincontrol.extensions import db
-from coincontrol.forms import BudgetForm, EditProfileForm, IncomeForm
-from coincontrol.models import Budgets, Expenses, Incomes, Users
+from coincontrol.forms import BudgetForm, ExpenseForm, IncomeForm
+from coincontrol.models import Budgets, Expenses, Incomes
 
 from .decorators import monitor
 
@@ -21,52 +21,128 @@ class UserDashboard(Resource):
         # app logic written here
         pass
 
-
 api.add_resource(UserDashboard, "/dashboard")
 
 
 class UserExpenses(Resource):
-    response = {"status": 400}
-
     @monitor
     @jwt_required(fresh=True)
     def get(self):
         # app logic written here
-        pass
+        try:
+            page = request.args.get("page", 1, type=int)
+            per_page = request.args.get("per_page", 4, type=int)
+            expenses = Expenses.query.filter_by(user_id=current_user.user_id).paginate(
+                page=page, per_page=per_page
+            )
+            if expenses:
+                data = []
+                for expense in expenses.items:
+                    data.append(
+                        {
+                            "expense_id": expense.expenses_id,
+                            "user_id": expense.user_id,
+                            "budget_id": expense.budget_id,
+                            "amount":expense.amount,
+                            "description": expense.description,
+                            "transaction_type": expense.transaction_type,
+                            "account_number":expense.account_number,
+                            "bank_name":expense.bank_name,
+                            "date_created": expense.date_created.strftime("%Y-%m-%d")
+                        }
+                    )
+                meta = {
+                    "page": expenses.page,
+                    "pages": expenses.pages,
+                    "total_count": expenses.total,
+                    "prev_page": expenses.prev_num,
+                    "next_page": expenses.next_num,
+                    "has_next": expenses.has_next,
+                    "has_prev": expenses.has_prev,
+                }
+                response = {
+                    "status":200,
+                    "message":"Expenses fetched successfully",
+                    "data":{
+                        "status":"success",
+                        "data": data
+                    },
+                    "meta":meta
+                }
+                return response, 200
+            else:
+                response = {
+                    "status":200,
+                    "message":"No Expenses found",
+                    "data":{
+                        "status":"success",
+                    }
+                }
+                return response, 200
+        except Exception as e:
+            print(e)
 
     @monitor
     @jwt_required(fresh=True)
     def post(self):
         # app logic written here
-        pass
+        try:
+            user_data = request.get_json()
+            name = user_data.get("name", "")
+            amount = float(user_data.get("amount", ""))
+            description = user_data.get("description")
+            account_number = user_data.get("account_number")
+            bank_name = user_data.get("bank_name").lower()
+            transaction_type = "withdrawal"
+            form = ExpenseForm()
+            if form.validate():
+                name = form.name.data
+                description = form.description.data
+                amount = form.amount.data
+                account_number = form.account_number.data
+                bank_name = form.bank_name.data
+                budget = Budgets.query.filter_by(name=name).first()
+                if budget is not None:
+                    expense = Expenses(
+                        user_id=current_user.user_id,
+                        budget_id=budget.budget_id,
+                        amount=amount,
+                        description=description,
+                        account_number=account_number,
+                        bank_name=bank_name,
+                        transaction_type=transaction_type,
+                    )
+                    budget.amount -= amount
+                    db.session.add(expense)
+                    db.session.commit()
+                    response = {
+                        "status": 201,
+                        "message": "Withdrawal successfull",
+                        "data": {
+                            "status": "success",
+                            "from": name,
+                            "to": bank_name,
+                            "amount": amount,
+                            "description": description,
+                            "transaction_type": transaction_type,
+                        },
+                    }
+                    return response, 201
+            else:
+                response = {
+                    "status": 400,
+                    "mesage": "Withdrawal failed",
+                    "data": {
+                        "status": "failed",
+                        "error": form.errors,
+                    },
+                }
+                return response, 400
+        except Exception as e:
+            print(e)
 
 
 api.add_resource(UserExpenses, "/expenses")
-
-
-class UserExpensesById(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    def get(self):
-        # app logic written here
-        pass
-
-    @monitor
-    @jwt_required(fresh=True)
-    def put(self):
-        # app logic written here
-        pass
-
-    @monitor
-    @jwt_required(fresh=True)
-    def delete(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(UserExpensesById, "/expenses/<int:id>")
 
 
 class UserIncome(Resource):
@@ -153,9 +229,9 @@ class UserIncome(Resource):
                     "status": 201,
                     "message": "Income top up successfull",
                     "data": {
-                        "status": "success", 
+                        "status": "success",
                         "amount": amount,
-                        "available_balance": existing_user_income.amount
+                        "available_balance": existing_user_income.amount,
                     },
                 }
                 return response, 201
@@ -183,7 +259,7 @@ class UserBudgets(Resource):
         # app logic written here
         try:
             page = request.args.get("page", 1, type=int)
-            per_page = request.args.get("per_page", 2, type=int)
+            per_page = request.args.get("per_page", 4, type=int)
             budgets = Budgets.query.filter_by(user_id=current_user.user_id).paginate(
                 page=page, per_page=per_page
             )

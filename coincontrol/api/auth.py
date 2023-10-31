@@ -42,7 +42,7 @@ class Register(Resource):
                     form.password.data,
                     form.confirm_password.data,
                 )
-                
+
                 if username and email and password and confirm_password:
                     user = Users(username=username, email=email, password=password)
                     user.generate_password_hash(password)
@@ -51,7 +51,11 @@ class Register(Resource):
                     response = {
                         "status": 201,
                         "message": "User created sucessfully",
-                        "data": {"status": "success", "username": username, "email": email},
+                        "data": {
+                            "status": "success",
+                            "username": username,
+                            "email": email,
+                        },
                     }
                     return response, 201
             else:
@@ -182,7 +186,6 @@ class RefreshToken(Resource):
         }
         return response, 200
 
-
 api.add_resource(RefreshToken, "/refresh")
 
 
@@ -200,8 +203,12 @@ class UserProfile(Resource):
                     "message": "User profile fetched successfully",
                     "data": {
                         "status": "success",
+                        "alternative_id": user.alternative_id,
                         "name": user.username,
                         "email": user.email,
+                        "verified": user.verified,
+                        "is_active": current_user.is_active,
+                        "is_admin": user.is_admin,
                     },
                 }
                 return response, 200
