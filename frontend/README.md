@@ -1,22 +1,28 @@
-Installation
 
-Follow these steps to set up and run Finance Tracker (CoinControl):
+# Installation
 
-Clone the repository:
+To run the Personal Finance Tracker locally(Frontend), follow these steps:
 
+1. Clone the repository from GitHub:
+
+```bash
 git clone https://github.com/onaya7/CoinControl.git
-
-Navigate to the project directory:
-
 cd CoinControl/frontend
+```
 
-Install dependencies:
 
+2. Install the required dependencies:
+
+```bash
 npm install
+```
 
+4.  run the application
 
-To run the project locally, use the following command:
+```bash
+npm run dev  
 
-npm start
+it will be running on http://localhost:5173
 
-This will start the development server, and you can view the application by opening http://localhost:3000 in your browser.
+```
+
