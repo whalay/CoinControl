@@ -19,11 +19,11 @@ from google_auth_oauthlib.flow import Flow
 from google.auth.transport import requests
 from google.oauth2 import id_token
 
-auth = Blueprint("auth", __name__, template_folder="templates", static_folder="static")
+auth_bp = Blueprint("auth_bp", __name__, template_folder="templates", static_folder="static")
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 
-@auth.route("/register", methods=["GET", "POST"])
+@auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
 
@@ -57,7 +57,7 @@ def register():
     return render_template("auth/register.html", form=form)
 
 
-@auth.route("/unconfirmed", methods=["GET"])
+@auth_bp.route("/unconfirmed", methods=["GET"])
 @login_required
 def unconfirmed():
     try:
@@ -70,8 +70,8 @@ def unconfirmed():
         flash("An error occurred while processing your request. Please try again later.")
         return redirect(url_for("main.home"))
 
-# Token confirmation route
-@auth.route("/confirm/<token>", methods=["GET"])
+# Token confirmation_bp route
+@auth_bp.route("/confirm/<token>", methods=["GET"])
 @login_required
 def confirm_token(token):
     try:
@@ -93,7 +93,7 @@ def confirm_token(token):
     return redirect(url_for("main.home"))
 
 
-@auth.route("/resend-token", methods=["GET"])
+@auth_bp.route("/resend-token", methods=["GET"])
 @login_required
 def resend_confirmation():
     try:
@@ -115,7 +115,7 @@ def resend_confirmation():
     return redirect(url_for("auth.unconfirmed"))
 
 
-@auth.route("/login", methods=["GET", "POST"])
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -140,7 +140,7 @@ def login():
     return render_template("auth/login.html", form=form)
 
 
-@auth.route("/google/Oauth/login", methods=["GET"])
+@auth_bp.route("/google/Oauth/login", methods=["GET"])
 def google_oauth_login():
     client_secrets_json = os.environ.get("CLIENT_SECRETS_JSON")
     client_secrets = json.loads(client_secrets_json)
@@ -160,7 +160,7 @@ def google_oauth_login():
     return redirect(authorization_url)
 
 
-@auth.route("/google/Oauth/signup", methods=["GET"])
+@auth_bp.route("/google/Oauth/signup", methods=["GET"])
 def google_oauth_signup():
     client_secrets_json = os.environ.get("CLIENT_SECRETS_JSON")
     client_secrets = json.loads(client_secrets_json)
@@ -180,7 +180,7 @@ def google_oauth_signup():
     return redirect(authorization_url)
 
 
-@auth.route("/google/auth/authorized", methods=["GET"])
+@auth_bp.route("/google/auth/authorized", methods=["GET"])
 def google_auth_authorized():
     state = session["state"]
     client_secrets_json = os.environ.get("CLIENT_SECRETS_JSON")
@@ -239,7 +239,7 @@ def google_auth_authorized():
     return redirect(url_for("main.dashboard"))
 
 
-@auth.route("/forgotpassword", methods=["GET", "POST"])
+@auth_bp.route("/forgotpassword", methods=["GET", "POST"])
 def forgotpassword():
     form = EmailForm()
     if form.validate_on_submit():
@@ -258,7 +258,7 @@ def forgotpassword():
     return render_template("auth/forgotpassword.html", form=form)
 
 
-@auth.route("/confirmpassword/<token>", methods=["GET", "POST"])
+@auth_bp.route("/confirmpassword/<token>", methods=["GET", "POST"])
 def confirmpassword(token):
     try:
         email = check_confirm_token(token)
@@ -281,7 +281,7 @@ def confirmpassword(token):
     return render_template("auth/confirmpassword.html", form=form, token=token)
 
 
-@auth.route("/logout", methods=["GET", "POST"])
+@auth_bp.route("/logout", methods=["GET", "POST"])
 @login_required
 def logout():
     logout_user()
@@ -289,7 +289,7 @@ def logout():
     return redirect(url_for("auth.login"))
 
 
-@auth.route("/admin", methods=["GET"])
+@auth_bp.route("/admin", methods=["GET"])
 @login_required
 @check_confirmed
 def admin():

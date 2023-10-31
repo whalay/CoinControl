@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, FloatField
 from wtforms.validators import (
     DataRequired,
     Length,
@@ -8,7 +8,7 @@ from wtforms.validators import (
     ValidationError,
     Regexp,
 )
-from coincontrol.models import Users
+from coincontrol.models import Users, Budgets
 import email_validator
 
 
@@ -40,6 +40,7 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField("Sign up")
 
     def validate_username(self, username):
+        print(username.data)
         user = Users.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError("This username is already in use by another user")
@@ -86,6 +87,23 @@ class ResetPasswordForm(FlaskForm):
             raise ValidationError(
                 "There is no account with that email. You must register first."
             )
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=25)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
+    def validate_username(self, username):
+        user = Users.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError("This username is already in use by another user")
+    def validate_email(self, email):
+        user = Users.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError(
+                "There is no account with that email. You must register first."
+            )
+            
 class EmailForm(FlaskForm):
     email = StringField('Email',validators=[DataRequired(), Email()])
     submit = SubmitField('Send')
@@ -94,3 +112,18 @@ class EmailForm(FlaskForm):
         user = Users.query.filter_by(email=email.data).first()
         if user is None:
             raise ValidationError('There is no account with that email. You must register first.')
+
+        
+class IncomeForm(FlaskForm):
+    amount = FloatField('Amount', validators=[DataRequired()])
+
+class BudgetForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    amount = FloatField('Amount', validators=[DataRequired()])
+    
+    def validate_name(self, name):
+        name = name.data.replace(" ", "-")
+        budget = Budgets.query.filter_by(name=name).first()
+        if budget:
+            raise ValidationError('Budget name already exists')
+        
