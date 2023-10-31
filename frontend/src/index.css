@@ -6,3 +6,7 @@
         font-family: "Balsamiq Sans", cursive;
     }
 }
+
+.active {
+    @apply text-[#EE6338] font-bold rounded;
+}

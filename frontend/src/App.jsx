@@ -4,8 +4,11 @@ import Homepage from "../../frontend/src/pages/Homepage";
 import LoginPage from "../../frontend/src/pages/LoginPage";
 import SignupPage from "../../frontend/src/pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
+import DashboardLayout from "./pages/DashboardLayout";
 import Logout from "./pages/Logout";
 import PrivateRoutes from "./pages/PrivateRoutes";
+import DashBoardBudget from "./pages/DashBoardBudget";
+import ComingSoon from "./pages/ComingSoon";
 
 const router = createBrowserRouter([
   {
@@ -37,8 +40,23 @@ const router = createBrowserRouter([
     // errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <Dashboard />,
+        path: 'me',
+        element: <DashboardLayout />,
+        children: [
+          {
+            
+            path: '',
+            element: <Dashboard />,
+          },
+          {
+            path: "budget",
+            element: <DashBoardBudget />,
+          },
+          {
+            path: "comingsoon",
+            element: <ComingSoon />,
+          },
+        ]
       },
     ],
   },
