@@ -14,12 +14,13 @@ from coincontrol.api.blacklist import BLACKLIST
 from coincontrol.extensions import bcrypt, db
 from coincontrol.forms import LoginForm, RegistrationForm
 from coincontrol.helpers import set_cookie
-from coincontrol.models import Users
+from coincontrol.models import Users, Incomes, create_income_for_user
 
 from .decorators import monitor
 
 api_auth_bp = Blueprint("api_auth_bp", __name__)
 api = Api(api_auth_bp, prefix="/api/v1")
+
 
 
 class Register(Resource):
@@ -48,6 +49,7 @@ class Register(Resource):
                     user.generate_password_hash(password)
                     db.session.add(user)
                     db.session.commit()
+                    create_income_for_user(user.user_id)
                     response = {
                         "status": 201,
                         "message": "User created sucessfully",

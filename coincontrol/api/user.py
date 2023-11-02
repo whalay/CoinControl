@@ -4,7 +4,7 @@ from flask_restful import Api, Resource, request
 
 from coincontrol.api.decorators import monitor, user_required
 from coincontrol.extensions import db
-from coincontrol.forms import BudgetForm, ExpenseForm, IncomeForm, EditBudgetForm
+from coincontrol.forms import BudgetForm, EditBudgetForm, ExpenseForm, IncomeForm
 from coincontrol.models import Budgets, Expenses, Incomes
 
 api_user_bp = Blueprint("api_user_bp", __name__)
@@ -405,16 +405,13 @@ class UserBudgetsById(Resource):
                 budget_id=id, user_id=current_user.user_id
             ).first()
             income = Incomes.query.filter_by(user_id=current_user.user_id).first()
-            
+
             if budget is not None:
                 user_data = request.get_json()
                 name = user_data.get("name", "")
                 amount = float(user_data.get("amount", ""))
                 if amount > income.amount:
-                    response = {
-                        "status": 400,
-                        "message": "Insufficient balance"
-                    }
+                    response = {"status": 400, "message": "Insufficient balance"}
                     return response, 400
                 form = EditBudgetForm()
                 if form.validate():
@@ -429,7 +426,7 @@ class UserBudgetsById(Resource):
                     income.amount = new_income
                     budget.name = name
                     budget.amount = new_budget_balance
-                    
+
                     db.session.commit()
                     response = {
                         "status": 200,

@@ -42,9 +42,14 @@ class AdminExpenses(Resource):
                 for expense in expenses.items:
                     data.append(
                         {
-                            "expense_id": expense.expenses_id,
-                            "amount": expense.amount,
+                           "expense_id": expense.expenses_id,
                             "user_id": expense.user_id,
+                            "budget_id": expense.budget_id,
+                            "amount": expense.amount,
+                            "description": expense.description,
+                            "transaction_type": expense.transaction_type,
+                            "account_number": expense.account_number,
+                            "bank_name": expense.bank_name,
                             "date_created": expense.date_created.strftime("%Y-%m-%d"),
                         }
                     )

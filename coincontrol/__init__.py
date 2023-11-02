@@ -35,10 +35,10 @@ def create_app(config_name="development"):
 
     # configure Cors
     CORS(app)
-    
+
     # initialize flask migrate
     migrate.init_app(app, db)
-    
+
     # initialize jwt
     jwt.init_app(app)
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
@@ -52,7 +52,7 @@ def create_app(config_name="development"):
     @jwt.user_identity_loader
     def user_identity_lookup(user):
         return user.user_id
-    
+
     @jwt.user_lookup_loader
     def user_lookup_callback(_jwt_header, jwt_data):
         identity = jwt_data["sub"]
@@ -100,7 +100,7 @@ def create_app(config_name="development"):
     login_manager.login_view = "auth.login"
     # login_manager.login_message ='Opps only admin users are authorized to access this page'
     login_manager.init_app(app)
-   
+
     @login_manager.user_loader
     def load_user(user_id):
         user = Users.query.get(user_id)

@@ -41,7 +41,7 @@ class Incomes(db.Model):
     __tablename__ = "incomes"
     income_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
-    amount = db.Column(db.Float, nullable=False)
+    amount = db.Column(db.Float, nullable=True, default=0.0)
     date_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     users = db.relationship("Users", back_populates="incomes")
 
@@ -80,3 +80,9 @@ class Expenses(db.Model):
 
     def __refr__(self):
         return f"Expenses(user_id:{self.user_id}, budget_id:{self.budget_id}, amount:{self.amount})"
+
+
+def create_income_for_user(user_id) -> None:
+    income = Incomes(user_id=user_id)
+    db.session.add(income)
+    db.session.commit()

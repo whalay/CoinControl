@@ -4,6 +4,7 @@ import uuid
 from flask import make_response, current_app
 from flask_jwt_extended import set_access_cookies
 
+
 """
 Helper functions are stored here
 
@@ -39,3 +40,5 @@ def set_cookie(response: make_response, token, duration=3600) -> make_response:
     #     cookie["secure"] = False
     response.set_cookie(**cookie)
     return response
+
+
