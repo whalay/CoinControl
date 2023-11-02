@@ -145,6 +145,10 @@ class BudgetForm(FlaskForm):
         if budget:
             raise ValidationError("Budget name already exists")
 
+class EditBudgetForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    amount = FloatField("Amount", validators=[DataRequired()])
+    
 
 class ExpenseForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])

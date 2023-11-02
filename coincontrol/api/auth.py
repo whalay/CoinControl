@@ -186,6 +186,7 @@ class RefreshToken(Resource):
         }
         return response, 200
 
+
 api.add_resource(RefreshToken, "/refresh")
 
 

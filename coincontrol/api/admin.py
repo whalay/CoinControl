@@ -4,7 +4,7 @@ from flask_restful import Api, Resource, request, url_for
 
 from coincontrol.api.decorators import admin_required, monitor
 from coincontrol.extensions import db
-from coincontrol.forms import IncomeForm
+from coincontrol.forms import BudgetForm, EditBudgetForm, IncomeForm
 from coincontrol.models import Budgets, Expenses, Incomes, Users
 
 api_admin_bp = Blueprint("api_admin_bp", __name__)
@@ -26,52 +26,58 @@ api.add_resource(AdminDashboard, "/dashboard")
 
 
 class AdminExpenses(Resource):
-    response = {"status": 400}
-
     @monitor
     @jwt_required(fresh=True)
     @admin_required
     def get(self):
         # app logic written here
-        pass
-
-    @monitor
-    @jwt_required(fresh=True)
-    @admin_required
-    def post(self):
-        # app logic written here
-        pass
+        try:
+            page = request.args.get("page", 1, type=int)
+            per_page = request.args.get("per_page", 4, type=int)
+            expenses = Expenses.query.order_by(Expenses.user_id).paginate(
+                page=page, per_page=per_page
+            )
+            if expenses:
+                data = []
+                for expense in expenses.items:
+                    data.append(
+                        {
+                            "expense_id": expense.expenses_id,
+                            "amount": expense.amount,
+                            "user_id": expense.user_id,
+                            "date_created": expense.date_created.strftime("%Y-%m-%d"),
+                        }
+                    )
+                meta = {
+                    "page": expenses.page,
+                    "pages": expenses.pages,
+                    "total_count": expenses.total,
+                    "prev_page": expenses.prev_num,
+                    "next_page": expenses.next_num,
+                    "has_next": expenses.has_next,
+                    "has_prev": expenses.has_prev,
+                }
+                response = {
+                    "status": 200,
+                    "message": "Expenses fetched successfully",
+                    "data": {"status": "success", "data": data},
+                    "meta": meta,
+                }
+                return response, 200
+            else:
+                response = {
+                    "status": 200,
+                    "message": "No Expenses found",
+                    "data": {
+                        "status": "success",
+                    },
+                }
+                return response, 200
+        except Exception as e:
+            print(e)
 
 
 api.add_resource(AdminExpenses, "/expenses")
-
-
-class AdminExpensesById(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    @admin_required
-    def get(self):
-        # app logic written here
-        pass
-
-    @monitor
-    @jwt_required(fresh=True)
-    @admin_required
-    def put(self):
-        # app logic written here
-        pass
-
-    @monitor
-    @jwt_required(fresh=True)
-    @admin_required
-    def delete(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(AdminExpensesById, "/expenses/<int:id>")
 
 
 class AdminIncome(Resource):
@@ -316,77 +322,113 @@ api.add_resource(AdminBudgets, "/budgets")
 
 
 class AdminBudgetsById(Resource):
-    response = {"status": 400}
+    @monitor
+    @jwt_required(fresh=True)
+    @admin_required
+    def get(self, id):
+        # app logic written here
+        try:
+            budget = Budgets.query.filter_by(user_id=id).first()
+            if budget is not None:
+                response = {
+                    "status": 200,
+                    "message": "Budget fetched successfully",
+                    "data": {
+                        "status": "success",
+                        "id": budget.budget_id,
+                        "user_id": budget.user_id,
+                        "name": budget.name,
+                        "date_created": budget.date_created.strftime("%Y-%m-%d"),
+                    },
+                }
+                return response, 200
+            else:
+                response = {
+                    "status": 404,
+                    "message": "Budget not found",
+                }
+                return response, 404
+        except Exception as e:
+            print(e)
 
     @monitor
     @jwt_required(fresh=True)
     @admin_required
-    def get(self):
+    def put(self, id):
         # app logic written here
-        pass
+        try:
+            budget = Budgets.query.filter_by(budget_id=id).first()
+            user_id = budget.user_id
+            income = Incomes.query.filter_by(user_id=user_id).first()
+            if budget is not None:
+                user_data = request.get_json()
+                name = user_data.get("name", "")
+                amount = float(user_data.get("amount", ""))
+                if amount > income.amount:
+                    response = {"status": 400, "message": "Insufficient balance"}
+                    return response, 400
+                form = EditBudgetForm()
+                if form.validate():
+                    name, amount = (
+                        form.name.data.strip().replace(" ", "-").lower(),
+                        form.amount.data,
+                    )
+                    new_income = income.amount - amount
+                    print(new_income)
+                    new_budget_balance = budget.amount + amount
+                    print(new_budget_balance)
+                    income.amount = new_income
+                    budget.name = name
+                    budget.amount = new_budget_balance
+                    db.session.commit()
+                    response = {
+                        "status": 200,
+                        "message": "Budget updated successfully",
+                        "data": {
+                            "status": "success",
+                            "name": name,
+                            "amount": amount,
+                        },
+                    }
+                    return response, 200
+                else:
+                    response = {
+                        "status": 400,
+                        "message": "Invalid form data",
+                        "data": {
+                            "status": "failed",
+                            "error": form.errors,
+                        },
+                    }
+                    return response, 400
+            else:
+                response = {"status": 404, "message": "Budget not found"}
+                return response, 404
+        except Exception as e:
+            print(e)
 
     @monitor
     @jwt_required(fresh=True)
     @admin_required
-    def put(self):
+    def delete(self, id):
         # app logic written here
-        pass
-
-    @monitor
-    @jwt_required(fresh=True)
-    @admin_required
-    def delete(self):
-        # app logic written here
-        pass
+        try:
+            budget = Budgets.query.filter_by(budget_id=id).first()
+            if budget is not None:
+                db.session.delete(budget)
+                db.session.commit()
+                response = {"status": 200, "message": "Budget deleted successfully"}
+                return response, 200
+            else:
+                response = {"status": 404, "message": "Budget not found"}
+                return response, 404
+        except Exception as e:
+            print(e)
 
 
 api.add_resource(AdminBudgetsById, "/budgets/<int:id>")
 
 
-# Report management
-class AdminExpensesReport(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    @admin_required
-    def get(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(AdminExpensesReport, "/reports/expenses")
-
-
-class AdminIncomeReport(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    @admin_required
-    def get(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(AdminIncomeReport, "/reports/income")
-
-
-class AdminBudgetsReport(Resource):
-    response = {"status": 400}
-
-    @monitor
-    @jwt_required(fresh=True)
-    @admin_required
-    def get(self):
-        # app logic written here
-        pass
-
-
-api.add_resource(AdminBudgetsReport, "/reports/budgets")
-
-
-# Account management
 class AdminProfile(Resource):
     response = {"status": 400}
 
