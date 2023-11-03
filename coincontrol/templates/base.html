@@ -29,7 +29,7 @@
     <!-- header section -->
     <header>
       <nav>
-        <a href="{{ url_for('main.home') }}" class="logo"
+        <a href="{{ url_for('main_bp.home') }}" class="logo"
           ><img
             src="{{ url_for('static', filename='img/coincontrol.png') }}"
             alt="coincontrol-logo"
@@ -37,7 +37,7 @@
         <div class="bx bx-menu-alt-right" id="menu-icon"></div>
         <ul class="navlist">
           <li><a href="#">How it works</a></li>
-          <li><a href="{{ url_for('main.about')}}">About Us</a></li>
+          <li><a href="{{ url_for('main_bp.about')}}">About Us</a></li>
           <li><a href="#">FAQ</a></li>
           <li>
             <a href="{{ url_for('auth.login') }}" id="nav-login-btn">Login</a>
