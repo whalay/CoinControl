@@ -33,11 +33,11 @@ def set_cookie(response: make_response, token, duration=3600) -> make_response:
     cookie["httponly"] = True
     cookie["samesite"] = "lax"
     
-    # if current_app.config["ENV"] == "production":
-    #     cookie["domain"] = current_app.config[" COOKIE_DOMAIN"]
-    #     cookie["secure"] = True
-    # else:
-    #     cookie["secure"] = False
+    if current_app.config["ENV"] == "production":
+        cookie["domain"] = current_app.config[" COOKIE_DOMAIN"]
+        cookie["secure"] = True
+    else:
+        cookie["secure"] = False
     response.set_cookie(**cookie)
     return response
 
