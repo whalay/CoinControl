@@ -175,14 +175,13 @@ class TestConfirmToken(unittest.TestCase):
         email = "testemail@gmail.com"
         user = Users(username=username, password=password, email=email)
         user.generate_password_hash(password)
-
         db.session.add(user)
         db.session.commit()
 
         # To send a confirmation token to a user
         user = Users.query.filter_by(email=email).first()
         user_id = user.user_id
-
+        
         # generate a confirmation_token
         token = create_access_token(identity=user_id)
 
@@ -198,7 +197,6 @@ class TestConfirmToken(unittest.TestCase):
         # verify the decoded token
         self.assertEqual(decoded_token["sub"], user_id)
         self.assertEqual(response.status_code, 200)
-        
         
 class TestResendConfirmation(unittest.TestCase):
     def create_app(self):

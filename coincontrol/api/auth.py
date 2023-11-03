@@ -16,7 +16,7 @@ from coincontrol.forms import LoginForm, RegistrationForm
 from coincontrol.helpers import set_cookie
 from coincontrol.models import Users, Incomes, create_income_for_user
 
-from .decorators import monitor
+from coincontrol.api.decorators import monitor
 
 api_auth_bp = Blueprint("api_auth_bp", __name__)
 api = Api(api_auth_bp, prefix="/api/v1")
@@ -43,7 +43,6 @@ class Register(Resource):
                     form.password.data,
                     form.confirm_password.data,
                 )
-
                 if username and email and password and confirm_password:
                     user = Users(username=username, email=email, password=password)
                     user.generate_password_hash(password)
@@ -147,6 +146,7 @@ class Login(Resource):
             }
             print(e)
             return response, 500
+
 
 api.add_resource(Login, "/login")
 
@@ -272,5 +272,4 @@ class UserProfile(Resource):
         except Exception as e:
             print(e)
 
-
-api.add_resource(UserProfile, "/user/profile")
+api.add_resource(UserProfile, "/profile")

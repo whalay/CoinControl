@@ -41,10 +41,10 @@ def register():
         except Exception as e:
             db.session.rollback()
             flash('An error occurred while processing your request. Please try again later.')
-            return redirect(url_for("auth.register"))
+            return redirect(url_for("auth_bp.register"))
         
         token = generate_confirmation_token(user.email)
-        confirm_url = url_for("auth.confirm_token", token=token, _external=True)
+        confirm_url = url_for("auth_bp.confirm_token", token=token, _external=True)
 
         send_confirm_email(
             email_receiver=email, user=user.username, confirm_url=confirm_url
@@ -52,7 +52,7 @@ def register():
 
         login_user(user)
         flash("A confirmation email has been sent to your email address.")
-        return redirect(url_for("auth.unconfirmed"))
+        return redirect(url_for("auth_bp.unconfirmed"))
 
     return render_template("auth/register.html", form=form)
 
@@ -63,12 +63,12 @@ def unconfirmed():
     try:
         if current_user.verified:
             flash("Your account has already been verified. Please login.")
-            return redirect(url_for("main.home"))
+            return redirect(url_for("main_bp.home"))
         flash("An error occurred while processing your request. Please try again later.")
         return render_template("auth/unconfirmed.html")
     except Exception as e:
         flash("An error occurred while processing your request. Please try again later.")
-        return redirect(url_for("main.home"))
+        return redirect(url_for("main_bp.home"))
 
 # Token confirmation_bp route
 @auth_bp.route("/confirm/<token>", methods=["GET"])
@@ -78,7 +78,7 @@ def confirm_token(token):
         email = check_confirm_token(token)
     except SignatureExpired:
         flash("The confirmation link is invalid or has expired.")
-        return redirect(url_for("main.home"))
+        return redirect(url_for("main_bp.home"))
     user = Users.query.filter_by(email=email).first()
     if user.verified:
         flash("Account already verified. Please login.")
@@ -90,7 +90,7 @@ def confirm_token(token):
         flash(
             "You have verified your email, you can now login to your dashboard. Thanks!"
         )
-    return redirect(url_for("main.home"))
+    return redirect(url_for("main_bp.home"))
 
 
 @auth_bp.route("/resend-token", methods=["GET"])
@@ -100,8 +100,8 @@ def resend_confirmation():
         token = generate_confirmation_token(current_user.email)
     except:
         flash("Error generating confirmation token. Please try again later.")
-        return redirect(url_for("auth.unconfirmed"))
-    confirm_url = url_for("auth.confirm_token", token=token, _external=True)
+        return redirect(url_for("auth_bp.unconfirmed"))
+    confirm_url = url_for("auth_bp.confirm_token", token=token, _external=True)
     try:
         resend_confirm_email(
             email_receiver=current_user.email,
@@ -110,9 +110,9 @@ def resend_confirmation():
         )
     except:
         flash("Error sending confirmation email. Please try again later.")
-        return redirect(url_for("auth.unconfirmed"))
+        return redirect(url_for("auth_bp.unconfirmed"))
     flash("A new confirmation email has been sent.")
-    return redirect(url_for("auth.unconfirmed"))
+    return redirect(url_for("auth_bp.unconfirmed"))
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -131,7 +131,7 @@ def login():
                 login_user(user, remember=remember)
                 flash('logged in successfully')
                 next_page = request.args.get('next')
-                return redirect(next_page) if next_page else redirect(url_for('main.dashboard'))
+                return redirect(next_page) if next_page else redirect(url_for('main_bp.dashboard'))
             else:
                 flash('Login Unsuccessful. Please check username and password')
         else:
@@ -212,7 +212,7 @@ def google_auth_authorized():
     if existing_user:
         if existing_user.verified != True:
             token = generate_confirmation_token(existing_user.email)
-            confirm_url = url_for("auth.confirm_token", token=token, _external=True)
+            confirm_url = url_for("auth_bp.confirm_token", token=token, _external=True)
             send_confirm_email(
                 email_receiver=email,
                 user=existing_user.username,
@@ -220,7 +220,7 @@ def google_auth_authorized():
             )
         login_user(existing_user)
         flash("logged in successfully")
-        return redirect(url_for("main.dashboard"))
+        return redirect(url_for("main_bp.dashboard"))
 
     user = Users(email=email, username=username)
     user.generate_password_hash(os.environ.get("FAKE_USER_GOOGLE_PASSWORD"))
@@ -228,7 +228,7 @@ def google_auth_authorized():
     db.session.commit()
 
     token = generate_confirmation_token(user.email)
-    confirm_url = url_for("auth.confirm_token", token=token, _external=True)
+    confirm_url = url_for("auth_bp.confirm_token", token=token, _external=True)
 
     send_confirm_email(
         email_receiver=email, user=user.username, confirm_url=confirm_url
@@ -236,7 +236,7 @@ def google_auth_authorized():
 
     login_user(user)
     flash("logges in successfully")
-    return redirect(url_for("main.dashboard"))
+    return redirect(url_for("main_bp.dashboard"))
 
 
 @auth_bp.route("/forgotpassword", methods=["GET", "POST"])
@@ -248,13 +248,13 @@ def forgotpassword():
         form_email = form.email.data
 
         token = generate_confirmation_token(form_email)
-        confirm_url = url_for("auth.confirmpassword", token=token, _external=True)
+        confirm_url = url_for("auth_bp.confirmpassword", token=token, _external=True)
 
         send_passwordreset_email(
             email_receiver=form_email, user=user.username, confirm_url=confirm_url
         )
         flash(f"We just emailed {form_email} with instructions to reset your password")
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth_bp.login"))
     return render_template("auth/forgotpassword.html", form=form)
 
 
@@ -264,10 +264,10 @@ def confirmpassword(token):
         email = check_confirm_token(token)
     except SignatureExpired:
         flash("The password reset link has expired.")
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth_bp.login"))
     except BadSignature:
         flash("The password reset link is invalid ")
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth_bp.login"))
 
     form = ResetPasswordForm()
     if form.validate_on_submit():
@@ -276,7 +276,7 @@ def confirmpassword(token):
         user.generate_password_hash(password)
         db.session.commit()
         flash("Your password has been updated successfully")
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth_bp.login"))
 
     return render_template("auth/confirmpassword.html", form=form, token=token)
 
@@ -286,7 +286,7 @@ def confirmpassword(token):
 def logout():
     logout_user()
     flash("You have been logged out.")
-    return redirect(url_for("auth.login"))
+    return redirect(url_for("auth_bp.login"))
 
 
 @auth_bp.route("/admin", methods=["GET"])
@@ -295,5 +295,5 @@ def logout():
 def admin():
     # if current_user.is_admin != True:
     #     flash("You need to be an admin to access this page")
-    #     return redirect(url_for("auth.login"))
+    #     return redirect(url_for("auth_bp.login"))
     return render_template("dashboard/admin_dashboard.html")

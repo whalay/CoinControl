@@ -19,7 +19,7 @@ from coincontrol.user import main_bp
 
 def create_app(config_name=os.environ.get("ENV")):
     app = Flask(__name__)
-    
+
     # setting up configuration from the development object
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
@@ -95,7 +95,7 @@ def create_app(config_name=os.environ.get("ENV")):
             },
         }
         return response, 400
-
+    
     # flask login manager
     login_manager = LoginManager()
     login_manager.login_view = "auth.login"
