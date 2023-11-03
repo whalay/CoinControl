@@ -14,7 +14,7 @@ from coincontrol.api.blacklist import BLACKLIST
 from coincontrol.extensions import bcrypt, db
 from coincontrol.forms import LoginForm, RegistrationForm
 from coincontrol.helpers import set_cookie
-from coincontrol.models import Users, Incomes, create_income_for_user
+from coincontrol.models import Users, create_income_for_user
 
 from coincontrol.api.decorators import monitor
 
@@ -134,18 +134,12 @@ class Login(Resource):
                         "refresh_token": refresh_token,
                     },
                 }
-                # response = make_response(response)
-                # response = set_cookie(response, access_token)
-                return response, 200
+                response = make_response(response)
+                response = set_cookie(response, access_token)
+                return response
 
         except Exception as e:
-            response = {
-                "status": 500,
-                "message": "Internal server error",
-                "data": {"status": "failed", "error": str(e)},
-            }
             print(e)
-            return response, 500
 
 
 api.add_resource(Login, "/login")
@@ -162,8 +156,9 @@ class LoginOut(Resource):
             "status": 200,
             "message": "You have been logged Out successfully",
         }
-        # unset_jwt_cookies(response)
-        return response, 200
+        response = make_response(response)
+        response = set_cookie(response, "", 0)
+        return response
 
 
 api.add_resource(LoginOut, "/logout")
@@ -185,7 +180,10 @@ class RefreshToken(Resource):
                 "email": current_user.email,
             },
         }
-        return response, 200
+        
+        response = make_response(response)
+        response = set_cookie(response, access_token)
+        return response
 
 
 api.add_resource(RefreshToken, "/refresh")
