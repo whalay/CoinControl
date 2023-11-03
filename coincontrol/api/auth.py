@@ -5,15 +5,13 @@ from flask_jwt_extended import (
     current_user,
     get_jwt,
     jwt_required,
-    set_access_cookies,
-    unset_jwt_cookies,
 )
 from flask_restful import Api, Resource
 
 from coincontrol.api.blacklist import BLACKLIST
 from coincontrol.extensions import bcrypt, db
 from coincontrol.forms import LoginForm, RegistrationForm
-from coincontrol.helpers import set_cookie
+from coincontrol.helpers import set_access_cookie, set_refresh_cookie
 from coincontrol.models import Users, create_income_for_user
 
 from coincontrol.api.decorators import monitor
@@ -135,7 +133,8 @@ class Login(Resource):
                     },
                 }
                 response = make_response(response)
-                response = set_cookie(response, access_token)
+                set_access_cookie(response, access_token)
+                set_refresh_cookie(response, refresh_token)
                 return response
 
         except Exception as e:
@@ -157,7 +156,8 @@ class LoginOut(Resource):
             "message": "You have been logged Out successfully",
         }
         response = make_response(response)
-        response = set_cookie(response, "", 0)
+        set_access_cookie(response, "", 0)
+        set_refresh_cookie(response, "", 0)
         return response
 
 
@@ -182,7 +182,7 @@ class RefreshToken(Resource):
         }
         
         response = make_response(response)
-        response = set_cookie(response, access_token)
+        set_access_cookie(response, access_token)
         return response
 
 
