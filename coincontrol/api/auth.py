@@ -148,7 +148,6 @@ class Login(Resource):
             print(e)
             return response, 500
 
-
 api.add_resource(Login, "/login")
 
 

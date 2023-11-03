@@ -1,8 +1,10 @@
-from flask import render_template, request, jsonify
-from coincontrol.user import main
+from flask import jsonify, render_template, request
 from flask_wtf.csrf import CSRFError
 
-@main.app_errorhandler(404)
+from coincontrol.user import main_bp
+
+
+@main_bp.app_errorhandler(404)
 def page_not_found(e):
     if request.accept_mimetypes.accept_json and \
         not request.accept_mimetypes.accept_html:
@@ -10,7 +12,7 @@ def page_not_found(e):
         response.status_code = 404
     return render_template('404.html'), 404
 
-@main.app_errorhandler(500)
+@main_bp.app_errorhandler(500)
 def internal_server_error(e):
     if request.accept_mimetypes.accept_json and \
         not request.accept_mimetypes.accept_html:
@@ -26,6 +28,6 @@ def forbidden(message):
 
 
 
-@main.errorhandler(CSRFError)
+@main_bp.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf_error.html', reason=e.description), 400

@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -16,9 +17,9 @@ from coincontrol.models import Users
 from coincontrol.user import main_bp
 
 
-def create_app(config_name="development"):
+def create_app(config_name=os.environ.get("ENV")):
     app = Flask(__name__)
-
+    
     # setting up configuration from the development object
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
