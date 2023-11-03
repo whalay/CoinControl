@@ -11,7 +11,7 @@ class Users(UserMixin, db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     alternative_id = db.Column(db.String(36), default=generate_uuid)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    passwor = db.Column(LargeBinary, nullable=True)
+    password = db.Column(LargeBinary, nullable=True)
     email = db.Column(db.String(80), unique=True, nullable=False)
     verified = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
