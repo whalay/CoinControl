@@ -1,6 +1,62 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Dashboard = () => {
+  const [incomeData, setIncomeData] = useState();
+  const [budgetData, setBudgetData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const incomeUrl = `${import.meta.env.VITE_APP_URL}/income`;
+  const budgetsUrl = `${import.meta.env.VITE_APP_URL}/budgets`;
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    axios
+      .get(incomeUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        // withCredentials: true,
+      })
+      .then((incomeResponse) => {
+        if (incomeResponse.status === 200) {
+          setIncomeData(incomeResponse.data.data.income)
+          setLoading(false);
+
+        } else if (incomeResponse.status === 404) {
+          console.log(false);
+        } else {
+          throw new Error("Failed to fetch user store");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user store:", error);
+      });
+
+      axios
+      .get(budgetsUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        // withCredentials: true,
+      })
+      .then((budgetResponse) => {
+        if (budgetResponse.status === 200) {
+          setBudgetData(budgetResponse.data.data.data)
+          setLoading(false);
+
+        } else if (budgetResponse.status === 404) {
+          console.log(false);
+        } else {
+          throw new Error("Failed to fetch user store");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user store:", error);
+      })
+
+  }, []);
 
   return (
     <div className="container mx-auto block md:flex flex-row  p-4 justify-between gap-10">
@@ -8,11 +64,15 @@ const Dashboard = () => {
         {" "}
         <section className="bg-white  p-6 rounded-md shadow-md mb-4 flex flex-col md:flex-row justify-between">
           <div>
-            <h2 className="text-xl font-semibold mb-2 text-[#EE6338]">Total Balance</h2>
-            <p className="text-xl font-bold">$1,000,000</p>
+            <h2 className="text-xl font-semibold mb-2 text-[#EE6338]">
+              Total Balance
+            </h2>
+            <p className="text-xl font-bold">${incomeData}</p>
           </div>
           <div>
-            <h2 className="text-xl font-semibold my-4 md:my-0 text-[#EE6338]">Quick Actions</h2>
+            <h2 className="text-xl font-semibold my-4 md:my-0 text-[#EE6338]">
+              Quick Actions
+            </h2>
             <span className="flex flex-row gap-5">
               {" "}
               <Link to="comingsoon">
@@ -32,25 +92,27 @@ const Dashboard = () => {
           {/* Add appropriate components and styling here */}
         </section>
         <section className="p-6 rounded-md shadow-md mb-4">
-          <h2 className="text-2xl font-semibold mb-4 text-[#EE6338]">Budget</h2>
-          <div className="flex flex-col md:flex-row justify-start gap-5">
-            <div className="rounded-md shadow-md p-2">
-              <h6 className="text-xl font-semibold mb-1">$200,000</h6>
-              <p className="font-semibold text-md">school fees</p>
+      <h2 className="text-2xl font-semibold mb-4">Budget</h2>
+      {loading && <p>Loading...</p>}
+      {/* {error && <p className="text-red-500">{error}</p>} */}
+      <div className="flex flex-col md:flex-row justify-start gap-5">
+        {Array.isArray(budgetData) && budgetData.length > 0 ? (
+          budgetData.map((budget) => (
+            <div className="rounded-md shadow-md p-2" key={budget.id}>
+              <h6 className="text-xl font-semibold mb-1">{budget.name}</h6>
+              <p className="font-semibold text-md">${budget.amount}</p>
+              <p>{budget.date_created}</p>
             </div>
-
-            <div className="rounded-md shadow-md p-2">
-              <h6 className="text-xl font-semibold mb-1">$200,000</h6>
-              <p className="font-semibold text-md">school fees</p>
-            </div>
-            <div className="rounded-md shadow-md p-2">
-              <h6 className="text-xl font-semibold mb-1">$200,000</h6>
-              <p className="font-semibold text-md">school fees</p>
-            </div>
-          </div>
-        </section>
+          ))
+        ) : (
+          <p>No budget data available.</p>
+        )}
+      </div>
+    </section>
         <section className="p-6 rounded-md shadow-md mb-4">
-          <h2 className="text-2xl font-semibold mb-4 text-[#EE6338]">Money Statistics</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-[#EE6338]">
+            Money Statistics
+          </h2>
           <div className="flex flex-col md:flex-row justify-start gap-5">
             <div className="rounded-md shadow-md p-2">
               <h6 className="text-xl font-semibold mb-1">Total Income</h6>

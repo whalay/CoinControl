@@ -11,6 +11,7 @@ import signin from "../assets/images/signin-bg.png";
 import coincontrol from "../assets/images/coincontrol.png";
 
 const LoginPage = () => {
+
   const { login, isLoggedIn} = useAuth();
   const [errors, setErrors] = useState({}); // New state for errors
 
@@ -19,7 +20,7 @@ const LoginPage = () => {
     password: "",
     rememberMe: false, // New state for "Remember Me"
   });
-
+  const url = `${import.meta.env.VITE_APP_URL}/login`;
   const handleLogin = async () => {
     const userData = {
       email: formState.email,
@@ -30,7 +31,7 @@ const LoginPage = () => {
     try {
       // Assuming you have a backend API endpoint for user authentication
       const response = await axios.post(
-        "http://127.0.0.1:5000/api/v1/login",
+        url,
         userData
       );
 
