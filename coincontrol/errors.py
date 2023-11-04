@@ -1,5 +1,5 @@
 from flask import render_template, request, jsonify
-from coincontrol.main import main
+from coincontrol.user import main
 from flask_wtf.csrf import CSRFError
 
 @main.app_errorhandler(404)

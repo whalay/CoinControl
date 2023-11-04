@@ -1,3 +1,4 @@
+
 # Installation
 
 To run the Personal Finance Tracker locally(Frontend), follow these steps:
@@ -24,3 +25,4 @@ npm run dev
 it will be running on http://localhost:5173
 
 ```
+

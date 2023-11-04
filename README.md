@@ -11,7 +11,6 @@ Welcome to Coincontrol! This Flask-based web application helps you track your pe
 - Samuel ayano: [linkedin.com/in/samuel-ayano-1336bb247](https://www.linkedin.com/in/samuel-ayano-1336bb247/)
 
 ## Installation
-
 To run the Personal Finance Tracker locally, follow these steps:
 
 1. Clone the repository from GitHub:
