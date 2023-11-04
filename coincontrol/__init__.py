@@ -1,4 +1,3 @@
-import os
 from datetime import timedelta
 
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -12,12 +11,14 @@ from coincontrol.api.blacklist import BLACKLIST
 from coincontrol.api.user import api_user_bp
 from coincontrol.auth import auth_bp
 from coincontrol.config import config
-from coincontrol.extensions import db, jwt, migrate
+from coincontrol.extensions import db, migrate
+from flask_jwt_extended import JWTManager
 from coincontrol.models import Users
 from coincontrol.user import main_bp
+import os
 
 
-def create_app(config_name=os.environ.get("ENV")):
+def create_app(config_name=os.environ.get("FLASK_ENV")):
     app = Flask(__name__)
 
     # setting up configuration from the development object
@@ -40,9 +41,9 @@ def create_app(config_name=os.environ.get("ENV")):
     # initialize flask migrate
     migrate.init_app(app, db)
 
-    # initialize jwt
-    jwt.init_app(app)
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
+    # configure jwt
+    jwt = JWTManager(app)  
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=1)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=1)
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
     app.config["REMEMBER_COOKIE_DURATION"] = timedelta(hours=1)
@@ -55,8 +56,8 @@ def create_app(config_name=os.environ.get("ENV")):
         return user.user_id
 
     @jwt.user_lookup_loader
-    def user_lookup_callback(_jwt_header, jwt_data):
-        identity = jwt_data["sub"]
+    def user_lookup_callback(_jwt_header, jwt_payload):
+        identity = jwt_payload["sub"]
         return Users.query.filter_by(user_id=identity).one_or_none()
 
     @jwt.token_in_blocklist_loader
@@ -75,12 +76,12 @@ def create_app(config_name=os.environ.get("ENV")):
         return response, 401
 
     @jwt.invalid_token_loader
-    def invalid_token_callback(invalid_token):
+    def invalid_token_callback(reason):
         response = {
             "status": 422,
             "message": "Invalid token",
             "data": {
-                "error": "This token is invalid",
+                "error": f"This token is invalid {reason}",
             },
         }
         return response, 422
@@ -95,7 +96,7 @@ def create_app(config_name=os.environ.get("ENV")):
             },
         }
         return response, 400
-    
+
     # flask login manager
     login_manager = LoginManager()
     login_manager.login_view = "auth.login"
