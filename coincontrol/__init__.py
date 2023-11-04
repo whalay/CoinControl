@@ -6,7 +6,6 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager, current_user
 from flask_wtf import CSRFProtect
-from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 from coincontrol.api.admin import api_admin_bp
 from coincontrol.api.auth import api_auth_bp
@@ -44,13 +43,13 @@ def create_app(config_name=os.environ.get("ENV")):
 
     # configure jwt
     jwt = JWTManager(app)
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=30)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=30)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=1)
-    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
-    app.config["REMEMBER_COOKIE_DURATION"] = timedelta(hours=1)
     app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies", "json", "query_string"]
     app.config["JWT_COOKIE_SECURE"] = False
     app.config["JWT_SESSION_COOKIE"] = timedelta(hours=1)
+    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
+    app.config["REMEMBER_COOKIE_DURATION"] = timedelta(hours=1)
 
     @jwt.user_identity_loader
     def user_identity_lookup(user):
@@ -123,7 +122,6 @@ def create_app(config_name=os.environ.get("ENV")):
             else:
                 flash("Please log in to access this page.")
             return redirect(url_for("auth.login"))
-
 
     # initialize the db
     db.init_app(app)
