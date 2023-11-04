@@ -18,7 +18,7 @@ from coincontrol.user import main_bp
 import os
 
 
-def create_app(config_name=os.environ.get("FLASK_ENV")):
+def create_app(config_name=os.environ.get("ENV")):
     app = Flask(__name__)
 
     # setting up configuration from the development object
