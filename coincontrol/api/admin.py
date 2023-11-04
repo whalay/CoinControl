@@ -1,8 +1,9 @@
 from flask import Blueprint
 from flask_jwt_extended import jwt_required
-from flask_restful import Api, Resource, request
+from flask_restful import Resource, request
 
 from coincontrol.api.decorators import admin_required, monitor
+from coincontrol.api.utils import Api
 from coincontrol.extensions import db
 from coincontrol.forms import EditBudgetForm, IncomeForm
 from coincontrol.models import Budgets, Expenses, Incomes, Users

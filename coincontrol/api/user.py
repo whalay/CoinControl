@@ -1,10 +1,12 @@
 from flask import Blueprint
 from flask_jwt_extended import current_user, jwt_required
-from flask_restful import Api, Resource, request
+from flask_restful import Resource, request
 
 from coincontrol.api.decorators import monitor, user_required
+from coincontrol.api.utils import Api
 from coincontrol.extensions import db
-from coincontrol.forms import BudgetForm, EditBudgetForm, ExpenseForm, IncomeForm
+from coincontrol.forms import (BudgetForm, EditBudgetForm, ExpenseForm,
+                               IncomeForm)
 from coincontrol.models import Budgets, Expenses, Incomes
 
 api_user_bp = Blueprint("api_user_bp", __name__)

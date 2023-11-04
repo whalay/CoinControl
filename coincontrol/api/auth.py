@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, make_response, request
+from flask import Blueprint, make_response, request
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -10,16 +10,14 @@ from flask_restful import Resource
 
 from coincontrol.api.blacklist import BLACKLIST
 from coincontrol.api.decorators import monitor
-from coincontrol.api.errors import decode_jwt
+from coincontrol.api.utils import Api
 from coincontrol.extensions import bcrypt, db
 from coincontrol.forms import LoginForm, RegistrationForm
 from coincontrol.helpers import set_access_cookie, set_refresh_cookie
 from coincontrol.models import Users, create_income_for_user
-from coincontrol.api.utils import Api
 
 api_auth_bp = Blueprint("api_auth_bp", __name__)
 api = Api(api_auth_bp, prefix="/api/v1")
-
 
 
 class Register(Resource):
@@ -150,29 +148,17 @@ class LoginOut(Resource):
     @monitor
     def post(self):
         # app login written here
-        token = request.cookies.get('token')
-        print("sam")
-        try:
-            decode_jwt(token)
-        except Exception as e:
-            print(e)
-            response = {
-                "status": 400,
-                "message": "Token error",
-                "data": {"status": "failed", "error": str(e)},
-            }
-            
-            jwt_token = get_jwt()["jti"]
-            BLACKLIST.add(jwt_token)
-            response = {
-                "status": 200,
-                "message": "You have been logged Out successfully",
-            }
-            response = make_response(response)
-            set_access_cookie(response, "", 0)
-            set_refresh_cookie(response, "", 0)
-            return response
-        
+        jwt_token = get_jwt()["jti"]
+        BLACKLIST.add(jwt_token)
+        response = {
+            "status": 200,
+            "message": "You have been logged Out successfully",
+        }
+        response = make_response(response)
+        set_access_cookie(response, "", 0)
+        set_refresh_cookie(response, "", 0)
+        return response
+
 
 api.add_resource(LoginOut, "/logout")
 
