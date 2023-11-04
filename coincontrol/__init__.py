@@ -16,6 +16,9 @@ from flask_jwt_extended import JWTManager
 from coincontrol.models import Users
 from coincontrol.user import main_bp
 import os
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+
+
 
 
 def create_app(config_name=os.environ.get("ENV")):
