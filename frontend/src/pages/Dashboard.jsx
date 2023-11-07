@@ -75,7 +75,7 @@ const Dashboard = () => {
             </h2>
             <span className="flex flex-row gap-5">
               {" "}
-              <Link to="comingsoon">
+              <Link to="income">
                 {" "}
                 <h6 className="hover:text-[#EE6338]">Top up</h6>
               </Link>
