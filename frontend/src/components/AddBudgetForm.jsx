@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddBudgetForm = ({ onBudgetAdded }) => {
+  const navigate = useNavigate();
   const [budgetName, setBudgetName] = useState("");
   const [budgetAmount, setBudgetAmount] = useState("");
 
@@ -27,6 +29,8 @@ const AddBudgetForm = ({ onBudgetAdded }) => {
         // Clear form fields
         setBudgetName("");
         setBudgetAmount("");
+        navigate("");
+
 
         // Notify parent component about the added budget
         onBudgetAdded(response.data.data);

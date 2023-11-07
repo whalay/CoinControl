@@ -11,6 +11,8 @@ import coincontrol from "../assets/images/coincontrol.png";
 
 const SignupPage = () => {
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({}); // New state for errors
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -45,18 +47,20 @@ const SignupPage = () => {
       // Optionally, you can redirect or perform other actions upon successful registration
       navigate("/login");
     } catch (error) {
-      if (error.response) {
+      // if (error.response) {
         // The request was made, but the server responded with a status code
         // that falls out of the range of 2xx
+        setErrors(error.response.data);
+
         console.error("Registration failed:", error.response.data);
         console.error("Status code:", error.response.status);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received from the server");
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error during registration:", error.message);
-      }
+      // } else if (error.request) {
+      //   // The request was made but no response was received
+      //   console.error("No response received from the server");
+      // } else {
+      //   // Something happened in setting up the request that triggered an Error
+      //   console.error("Error during registration:", error.message);
+      // }
     }
     console.log("Form submitted:", formData);
   };
@@ -132,7 +136,7 @@ const SignupPage = () => {
                 type="password"
                 id="password"
                 name="password"
-                placeholder="Atleast 8 characters"
+                placeholder="Atleast 8 characters eg:Test@1"
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full p-1 pl-10 bg-[#F2F2F2] border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
@@ -153,7 +157,7 @@ const SignupPage = () => {
                 type="password"
                 id="confirm_password"
                 name="confirm_password"
-                placeholder="Atleast 8 characters"
+                placeholder="Atleast 8 characters eg: Test@1"
                 value={formData.confirm_password}
                 onChange={handleChange}
                 className="w-full p-1 pl-10 bg-[#F2F2F2] border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
@@ -161,6 +165,9 @@ const SignupPage = () => {
               />
             </div>
           </div>
+          {errors && (
+            <div className="text-red-500 text-sm mt-2">{errors.message}</div>
+          )}
           <button
             type="submit"
             className="hover:bg-[#EE6338] text-black py-2 px-4 rounded-md  w-full"
@@ -173,7 +180,7 @@ const SignupPage = () => {
               onClick={handleGoogleSignUp}
               className="w-full text-black p-2 rounded-md mt-2 bg-[#F2F2F2]  hover:bg-[#EE6338] focus:outline-none focus:ring "
             >
-              Sign up with Google
+              Sign up with Google 
             </button>
           </div>
 
