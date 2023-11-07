@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AddIncome = () => {
   const [amount, setAmount] = useState("");
+  const navigate = useNavigate()
  
 
   const handleSubmit = async (e) => {
@@ -25,6 +27,7 @@ const AddIncome = () => {
       if (response.status === 201 || response.data.status === "success") {
         // Clear form fields
         setAmount("");
+        navigate('/dashboard/me');
 
         // Notify parent component about the added budget
       } else {
