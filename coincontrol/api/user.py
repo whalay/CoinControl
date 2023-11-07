@@ -384,7 +384,8 @@ class UserBudgetsById(Resource):
                         "id": budget.budget_id,
                         "user_id": budget.user_id,
                         "name": budget.name,
-                        "date_created": budget.date_created.strftime("%Y-%m-%d"),
+                        "amount":budget.amount,
+                        "date_created": budget.date_created.strftime("%Y-%m-%d")
                     },
                 }
                 return response, 200
