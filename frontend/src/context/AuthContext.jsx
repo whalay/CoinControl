@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect,  } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 // import axios from "axios";
 
 // Create the AuthContext
@@ -9,39 +9,36 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   // const [errors, setErrors] = useState({}); // New state for errors
 
-  
-    // Check for stored token during component initialization
-    useEffect(() => {
-      const storedUser = localStorage.getItem('userData');
-    if (storedUser) {
+  // Check for stored token during component initialization
+  useEffect(() => {
+    const storedToken = localStorage.getItem("accessToken");
+    const storedUser = localStorage.getItem("userData");
+    if (storedToken) {
       setUser(JSON.parse(storedUser));
       setIsLoggedIn(true);
-      
     }
-    }, []);
+  }, []);
 
   const login = async (response) => {
-
     // try {
-      // Assuming you have a backend API endpoint for user authentication
-      // const response = await axios.post(
-      //   "http://127.0.0.1:5000/api/v1/login",
-      //   userData
-      // );
+    // Assuming you have a backend API endpoint for user authentication
+    // const response = await axios.post(
+    //   "http://127.0.0.1:5000/api/v1/login",
+    //   userData
+    // );
 
-      // If authentication is successful, set the user data in the state
-      setUser(response.data.data);
-      setIsLoggedIn(true);
-      // console.log(response.data.data);
+    // If authentication is successful, set the user data in the state
+    setUser(response.data.data);
+    setIsLoggedIn(true);
+    // console.log(response.data.data);
 
-    
-      // You can save it in local storage or a cookie
-      localStorage.setItem("accessToken", response.data.data.access_token);
-      localStorage.setItem('userData', JSON.stringify(response.data.data));
+    // You can save it in local storage or a cookie
+    localStorage.setItem("accessToken", response.data.data.access_token);
+    localStorage.setItem("userData", JSON.stringify(response.data.data));
 
-      // console.log(response.data.data.access_token);
-      // navigate('/dashboard');
-      // window.location.href = "/dashboard";
+    // console.log(response.data.data.access_token);
+    // navigate('/dashboard');
+    // window.location.href = "/dashboard";
     // } catch (error) {
     //   // Handle login failure
     //   console.error("Login failed:", error);

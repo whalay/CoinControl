@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { AiOutlineMail } from "react-icons/ai";
 import { AiOutlineLock } from "react-icons/ai";
-import {AiOutlineUser} from "react-icons/ai";
+import { AiOutlineUser } from "react-icons/ai";
 
 import signup from "../assets/images/signup-bg.png";
 import coincontrol from "../assets/images/coincontrol.png";
@@ -29,6 +29,7 @@ const SignupPage = () => {
     // Implement Google Sign-In logic
     console.log("Signing in with Google");
   };
+  const url = `${import.meta.env.VITE_APP_URL}/register`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +37,7 @@ const SignupPage = () => {
     try {
       // Assuming you have a backend API endpoint for user registration
       const response = await axios.post(
-        "http://127.0.0.1:5000/api/v1/register",
+        url,
         formData
       );
 
@@ -178,12 +179,15 @@ const SignupPage = () => {
 
           <p className="mt-4 text-center text-gray-600">
             Already have an account?{" "}
-            <button
-              type="button"
-              className="text-blue-500 hover:underline focus:outline-none"
-            >
-              Log in
-            </button>
+            <Link to="/login">
+              {" "}
+              <button
+                type="button"
+                className="text-blue-500 hover:underline focus:outline-none"
+              >
+                Log in
+              </button>
+            </Link>
           </p>
         </form>
       </div>

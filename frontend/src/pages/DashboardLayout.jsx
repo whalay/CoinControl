@@ -11,7 +11,7 @@ const DashboardLayout = () => {
           <div className="border p-5">
             {/* <h1 className="text-start  py-5">Menu</h1> */}
             <ul className="flex flex-col items-start gap-10">
-            <li className="hover:text-[#EE6338]">
+              <li className="hover:text-[#EE6338]">
                 <NavLink to="">Dashboard</NavLink>
               </li>
               <li className="hover:text-[#EE6338]">
@@ -26,7 +26,7 @@ const DashboardLayout = () => {
             <h1 className="text-start pb-10 py-5">General</h1>
             <ul className="flex flex-col items-start gap-10 ">
               <li className="hover:text-[#EE6338]">
-              <Link to="comingsoon">Settings</Link>
+                <Link to="comingsoon">Settings</Link>
               </li>
               <li className="hover:text-[#EE6338]">
                 <Link to="comingsoon">Help/Support</Link>

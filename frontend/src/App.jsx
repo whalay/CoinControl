@@ -9,6 +9,9 @@ import Logout from "./pages/Logout";
 import PrivateRoutes from "./pages/PrivateRoutes";
 import DashBoardBudget from "./pages/DashBoardBudget";
 import ComingSoon from "./pages/ComingSoon";
+import Budget from "./pages/Budget";
+import AddIncome from "./pages/AddIncome";
+import BudgetDetail from "./pages/BudgetDetail";
 
 const router = createBrowserRouter([
   {
@@ -31,7 +34,7 @@ const router = createBrowserRouter([
     element: <Logout />,
   },
   {
-    path: "signup",
+    path: "register",
     element: <SignupPage />,
   },
   {
@@ -50,7 +53,15 @@ const router = createBrowserRouter([
           },
           {
             path: "budget",
-            element: <DashBoardBudget />,
+            element: <Budget />,
+          },
+          {
+            path: "budget/:budgetId",
+            element: <BudgetDetail />,
+          },
+          {
+            path: "income",
+            element: <AddIncome />,
           },
           {
             path: "comingsoon",

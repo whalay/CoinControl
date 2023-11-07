@@ -51,7 +51,7 @@ const Navbar = () => {
                 Login
               </button>
             </Link>
-            <Link to="signup">
+            <Link to="register">
               <button className="border px-6 py-2 hover:bg-[#EE6338] hover:border-none hover:text-white">
                 Create free account
               </button>
