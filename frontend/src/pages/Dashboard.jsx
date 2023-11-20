@@ -86,7 +86,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container mx-auto block md:flex flex-row  p-4 justify-between gap-10">
+    <div className="container mx-auto block md:flex flex-row p-2  md:p-4 justify-between gap-10">
       <div className="flex-1">
         {" "}
         <section className="bg-white  p-6 rounded-md shadow-md mb-4 flex flex-col md:flex-row justify-between">
@@ -112,12 +112,12 @@ const Dashboard = () => {
               {isModalOpen && activeModal === "AddIncome" && (
                 <AddIncome closeModal={handleModalClose} />
               )}
-              <button onClick={handleTransfer} className="hover:text-[#EE6338]">
+              {/* <button onClick={handleTransfer} className="hover:text-[#EE6338]">
                 Transfer
               </button>
               {isModalOpen && activeModal === "Transfer" && (
                 <Transfer closeModal={handleModalClose} />
-              )}
+              )} */}
               <button onClick={handleWithdraw} className="hover:text-[#EE6338]">
                 Withdraw
               </button>
