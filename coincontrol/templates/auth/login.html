@@ -28,7 +28,7 @@
         
         <div class="container">
             <div class="box-01">
-                <a href="{{ url_for('main.home') }}" class="logo"><img src="{{ url_for('static', filename='img/coincontrol.png') }}" alt="coincontrol-logo"></a>
+                <a href="{{ url_for('main_bp.home') }}" class="logo"><img src="{{ url_for('static', filename='img/coincontrol.png') }}" alt="coincontrol-logo"></a>
                 <img src="{{ url_for('static', filename='img/signin-bg.png') }}" alt="signin-bg"> 
             </div>
             
@@ -36,7 +36,7 @@
                 <div class="form-bx">
                     <h2>Welcome back!</h2>
                     <p>Start managing your finance faster and better.</p>
-                    <form action="{{ url_for('auth.login') }}" method="post"> 
+                    <form action="{{ url_for('auth_bp.login') }}" method="post"> 
                         {{ form.hidden_tag() }}
                         <div class="input-bx">
                             {{ form.email.label}}
@@ -69,7 +69,7 @@
                                 {{ form.remember.label }}
                             </span>
 
-                            <a href="{{url_for('auth.forgotpassword')}}">Forgot password?</a>
+                            <a href="{{url_for('auth_bp.forgotpassword')}}">Forgot password?</a>
                        </div>
                         
                         {{ form.submit}}
@@ -83,11 +83,11 @@
 
                     <div class="google-bx">
                         <img src="{{ url_for('static', filename='img/google.svg') }}" alt="google-icon"> 
-                        <a href="{{ url_for('auth.google_oauth_login')}}">Sign in with Google</a>
+                        <a href="{{ url_for('auth_bp.google_oauth_login')}}">Sign in with Google</a>
                     </div>
                     
                     <div class="form-footer">
-                        <p>Don't you have an account?</p><a href="{{ url_for('auth.register') }}">Sign Up</a>
+                        <p>Don't you have an account?</p><a href="{{ url_for('auth_bp.register') }}">Sign Up</a>
                     </div>
                     
                 </div>

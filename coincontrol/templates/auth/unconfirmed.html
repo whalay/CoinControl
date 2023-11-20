@@ -31,7 +31,7 @@
                 validity of your email address. After
                 receiveing the email follow the link provided to complete the registration.
             </p>
-            <p>Didnt get the email? <a href="{{ url_for('auth.resend_confirmation')}}">Resend confirmation mail</a>
+            <p>Didnt get the email? <a href="{{ url_for('auth_bp.resend_confirmation')}}">Resend confirmation mail</a>
             </p>
             <p>By clicking on the link, a new confirmation email will be sent to your registered email address.
                 Please follow the instructions in the email to confirm your account and gain full access to our
@@ -42,7 +42,7 @@
                 at <a href="mailto:support@coincontrol.com">support@coincontrol.com</a>.</p>
             <p>Thank you for choosing our platform. We appreciate your cooperation.</p>
             <p>Best regards,</p>
-            <a href="{{ url_for('main.home') }}" class="logo">
+            <a href="{{ url_for('main_bp.home') }}" class="logo">
             <img src="{{ url_for('static', filename='img/coincontrol.png') }}" alt="coincontrol-logo"></a>
 
         </div>

@@ -2,17 +2,17 @@ from flask import render_template, redirect, url_for
 from flask import Blueprint, flash
 from flask_login import login_required, current_user
 from coincontrol.decorators import check_confirmed
-main = Blueprint("main", __name__, template_folder='templates', static_folder='static')
+main_bp = Blueprint("main_bp", __name__, template_folder='templates', static_folder='static')
 
-@main.route('/', methods=["GET"])
+@main_bp.route('/', methods=["GET"])
 def home():
     return render_template('home.html')
 
-@main.route('/about', methods=["GET"])
+@main_bp.route('/about', methods=["GET"])
 def about():
     return render_template('about.html')
 
-@main.route('/dashboard', methods=["GET"])
+@main_bp.route('/dashboard', methods=["GET"])
 @login_required
 @check_confirmed
 def dashboard():
@@ -20,22 +20,22 @@ def dashboard():
     return render_template('dashboard/dashboard.html')
 
 # Expenses management route
-@main.route('/expenses', methods=["GET","POST"])
+@main_bp.route('/expenses', methods=["GET","POST"])
 @login_required
 def expenses():
     pass
 
-@main.route('/expenses/<int:id>', methods=["GET"])
+@main_bp.route('/expenses/<int:id>', methods=["GET"])
 @login_required
 def get_expenses():
     pass
 
-@main.route('/expenses/<int:id>', methods=["POST"])
+@main_bp.route('/expenses/<int:id>', methods=["POST"])
 @login_required
 def update_expenses():
     pass
 
-@main.route('/expenses/<int:id>', methods=["POST"])
+@main_bp.route('/expenses/<int:id>', methods=["POST"])
 @login_required
 def delete_expenses():
     pass
@@ -43,22 +43,22 @@ def delete_expenses():
 # ---------------------------------------------------------------------------------------
 
 # Income management route
-@main.route('/income', methods=["GET","POST"])
+@main_bp.route('/income', methods=["GET","POST"])
 @login_required
 def income():
     pass
 
-@main.route('/income/<int:id>', methods=["GET"])
+@main_bp.route('/income/<int:id>', methods=["GET"])
 @login_required
 def get_income():
     pass
 
-@main.route('/income/<int:id>', methods=["POST"])
+@main_bp.route('/income/<int:id>', methods=["POST"])
 @login_required
 def update_income():
     pass
 
-@main.route('/income/<int:id>', methods=["POST"])
+@main_bp.route('/income/<int:id>', methods=["POST"])
 @login_required
 def delete_income():
     pass
@@ -66,22 +66,22 @@ def delete_income():
 # ---------------------------------------------------------------------------------------
 
 # Budgets management route
-@main.route('/budgets', methods=["GET","POST"])
+@main_bp.route('/budgets', methods=["GET","POST"])
 @login_required
 def budgets():
     pass
 
-@main.route('/budgets/<int:id>', methods=["GET"])
+@main_bp.route('/budgets/<int:id>', methods=["GET"])
 @login_required
 def get_budgets():
     pass
 
-@main.route('/budgets/<int:id>', methods=["POST"])
+@main_bp.route('/budgets/<int:id>', methods=["POST"])
 @login_required
 def update_budgets():
     pass
 
-@main.route('/budgets/<int:id>', methods=["POST"])
+@main_bp.route('/budgets/<int:id>', methods=["POST"])
 @login_required
 def delete_budgets():
     pass
@@ -89,17 +89,17 @@ def delete_budgets():
 # ---------------------------------------------------------------------------------------
 
 # Report and Analytics management route
-@main.route('/reports/expenses', methods=["GET"])
+@main_bp.route('/reports/expenses', methods=["GET"])
 @login_required
 def reports_expenses():
     pass
 
-@main.route('/reports/income', methods=["GET"])
+@main_bp.route('/reports/income', methods=["GET"])
 @login_required
 def reports_income():
     pass
 
-@main.route('/reports/budgets', methods=["GET"])
+@main_bp.route('/reports/budgets', methods=["GET"])
 @login_required
 def reports_budgets():
     pass
@@ -107,7 +107,7 @@ def reports_budgets():
 
 
 # Account Settings and security route
-@main.route('/profile', methods=["GET", "POST"])
+@main_bp.route('/profile', methods=["GET", "POST"])
 @login_required
 def profile():
     pass
