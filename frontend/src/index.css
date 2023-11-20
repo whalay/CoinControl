@@ -3,7 +3,7 @@
 @tailwind utilities;
 @layer base {
     html {
-        font-family: "Balsamiq Sans", cursive;
+        font-family: nunito, Verdana, Geneva, Tahoma, sans-serif;
     }
 }
 

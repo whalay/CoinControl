@@ -39,35 +39,28 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <PrivateRoutes />,
+    element: <DashboardLayout />,
     // errorElement: <ErrorPage />,
     children: [
       {
-        path: 'me',
-        element: <DashboardLayout />,
-        children: [
-          {
-            
-            path: '',
-            element: <Dashboard />,
-          },
-          {
-            path: "budget",
-            element: <Budget />,
-          },
-          {
-            path: "budget/:budgetId",
-            element: <BudgetDetail />,
-          },
-          {
-            path: "income",
-            element: <AddIncome />,
-          },
-          {
-            path: "comingsoon",
-            element: <ComingSoon />,
-          },
-        ]
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "budget",
+        element: <Budget />,
+      },
+      {
+        path: "budget/:budgetId",
+        element: <BudgetDetail />,
+      },
+      {
+        path: "income",
+        element: <AddIncome />,
+      },
+      {
+        path: "comingsoon",
+        element: <ComingSoon />,
       },
     ],
   },

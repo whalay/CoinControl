@@ -64,7 +64,7 @@ const LoginPage = () => {
   };
 
   return isLoggedIn ? (
-    <Navigate to="/dashboard/me" />
+    <Navigate to="/dashboard" />
   ) : (
     <div className="h-screen flex md:flex-row flex-col items-center md:px-10 px-3">
       <div className="md:w-1/2">

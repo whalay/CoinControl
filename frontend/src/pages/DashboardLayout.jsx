@@ -1,8 +1,10 @@
 import DashboardNavbar from "./DashboardNavbar";
 import { Outlet, Link, NavLink } from "react-router-dom";
+import PrivateRoutes from "./PrivateRoutes";
 
 const DashboardLayout = () => {
   return (
+    <PrivateRoutes>
     <div className=" p-5 md:p-10 relative container pb-10">
       <DashboardNavbar />
 
@@ -45,6 +47,7 @@ const DashboardLayout = () => {
         <Outlet />
       </div>
     </div>
+    </PrivateRoutes>
   );
 };
 

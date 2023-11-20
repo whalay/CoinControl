@@ -1,9 +1,17 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import jsCookie from 'js-cookie'
 
-const PrivateRoutes = () => {
+
+const PrivateRoutes = ({children}) => {
   const { isLoggedIn } = useAuth();
+  const storedToken = jsCookie.get("accessToken");
 
-  return isLoggedIn ? <Outlet /> : <Navigate to="/login" />;
+
+  if (!storedToken){
+    return <Navigate to="/login" />
+  }
+
+  return children
 };
 export default PrivateRoutes;

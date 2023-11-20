@@ -129,7 +129,7 @@ const Dashboard = () => {
           {/* Add appropriate components and styling here */}
         </section>
         <section className="p-6 rounded-md shadow-md mb-4">
-          <h2 className="text-2xl font-semibold mb-4">Budget</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-[#EE6338]">Budget</h2>
           {loading && <p>Loading...</p>}
           {/* {error && <p className="text-red-500">{error}</p>} */}
           <div className="flex flex-col md:flex-row justify-start gap-5">
