@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { FaTimes } from "react-icons/fa";
@@ -35,11 +35,21 @@ const DashboardMobileNav = () => {
             }`}
           >
             <ul className="text-2xl  space-y-10 py-10">
-              <li>How it works</li>
-              <li>About Us</li>
-              <li>FAQ</li>
+              <li onClick={closeNav}>
+              <NavLink to="">Home</NavLink>
+              </li>
+              <li onClick={closeNav}>
+                <Link to="budget">Budgets</Link>
+              </li>
+              <li onClick={closeNav}>
+              <NavLink to="comingsoon">Analytics</NavLink>
+              </li>
             </ul>
-
+            <Link to="logout">
+              <button className=" w-full bg-[rgb(238,99,56)]  py-2 px-4 hover:bg-[#EE6338] hover:text-white border ">
+                Logout
+              </button>
+            </Link>
             {/* {isLoggedIn ? (
               <div className="lg:hidden flex flex-col space-y-10">
                 {" "}
