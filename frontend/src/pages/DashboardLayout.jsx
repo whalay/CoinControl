@@ -3,7 +3,7 @@ import { Outlet, Link, NavLink } from "react-router-dom";
 
 const DashboardLayout = () => {
   return (
-    <div className="p-10 relative container pb-10">
+    <div className=" p-5 md:p-10 relative container pb-10">
       <DashboardNavbar />
 
       <div className="absolute left-10 hidden md:block   ">
