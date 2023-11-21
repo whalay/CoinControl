@@ -19,7 +19,7 @@ const MobileNav = () => {
 
   return (
     <div className="">
-      <RxHamburgerMenu onClick={hamburgerHandler} className="z-50" />
+      <RxHamburgerMenu onClick={hamburgerHandler} className="z-50 text-2xl"  />
       {isOpen && (
         <div
           className={`${
@@ -28,7 +28,7 @@ const MobileNav = () => {
               : "p-5"
           }`}
         >
-          <FaTimes onClick={closeNav} className="absolute top-10 right-10" />
+          <FaTimes onClick={closeNav} className="absolute top-10 right-10 text-2xl" />
           <div
             className={`${
               isOpen ? "  absolute top-10 left-10 text-2xl     " : "lg:hidden  "

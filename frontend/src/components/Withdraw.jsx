@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
 import axios from "axios";
+import jsCookie from 'js-cookie'
+
 
 import Modal from "../components/Modal";
 
@@ -19,7 +21,7 @@ const Withdraw = ({ closeModal }) => {
 
   const fetchBudgets = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = jsCookie.get("accessToken");
 
       const response = await axios.get(`${import.meta.env.VITE_APP_URL}/budgets`,{
         headers: {

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import jsCookie from 'js-cookie'
+
 import { useModal } from "../context/ModalContext";
 import axios from "axios";
 import AddIncome from "./AddIncome";
@@ -17,7 +19,7 @@ const Dashboard = () => {
   const budgetsUrl = `${import.meta.env.VITE_APP_URL}/budgets`;
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token =jsCookie.get("accessToken");
     axios
       .get(incomeUrl, {
         headers: {

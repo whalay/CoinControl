@@ -38,7 +38,7 @@ const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
-    path: "/dashboard",
+    path: "dashboard",
     element: <DashboardLayout />,
     // errorElement: <ErrorPage />,
     children: [
@@ -57,6 +57,10 @@ const router = createBrowserRouter([
       {
         path: "income",
         element: <AddIncome />,
+      },
+      {
+        path: "logout",
+        element: <Logout />,
       },
       {
         path: "comingsoon",

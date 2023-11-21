@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import jsCookie from 'js-cookie'
+
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal"
 import { useModal } from "../context/ModalContext";
@@ -17,7 +19,7 @@ const AddBudgetForm = ({ onBudgetAdded }) => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = jsCookie.get("accessToken");
       const response = await axios.post(
         `${import.meta.env.VITE_APP_URL}/budgets`,
         {

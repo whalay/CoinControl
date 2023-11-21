@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import jsCookie from 'js-cookie'
+import jsCookie from "js-cookie";
 // import axios from "axios";
 
 // Create the AuthContext
@@ -14,8 +14,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // const storedToken = localStorage.getItem("accessToken");
     const storedToken = jsCookie.get("accessToken");
+    const storedUser = jsCookie.get("userData");
 
-    const storedUser = localStorage.getItem("userData");
+    // console.log(storeuser);
+    // const storedUser = localStorage.getItem("userData");
     if (storedToken) {
       setUser(JSON.parse(storedUser));
       setIsLoggedIn(true);
@@ -31,15 +33,18 @@ export const AuthProvider = ({ children }) => {
     // );
 
     // If authentication is successful, set the user data in the state
+    console.log(response.data.data);
+
     setUser(response.data.data);
     setIsLoggedIn(true);
-    // console.log(response.data.data);
+    console.log(response.data.data);
 
     // You can save it in local storage or a cookie
     // localStorage.setItem("accessToken", response.data.data.access_token);
     localStorage.setItem("userData", JSON.stringify(response.data.data));
 
     jsCookie.set("accessToken", response.data.data.access_token);
+    jsCookie.set("userData", JSON.stringify(response.data.data));
 
     // console.log(response.data.data.access_token);
     // navigate('/dashboard');
@@ -65,7 +70,7 @@ export const AuthProvider = ({ children }) => {
 
     // Optionally, clear any saved tokens or session data
     // localStorage.removeItem("accessToken");
-  jsCookie.remove("accessToken");
+    jsCookie.remove("accessToken");
 
     localStorage.removeItem("userData");
   };

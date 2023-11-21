@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useModal } from "../context/ModalContext";
+import jsCookie from 'js-cookie'
+
 
 import axios from "axios";
 import Modal from "../components/Modal";
@@ -16,7 +18,7 @@ const AddIncome = ({closeModal}) => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = jsCookie.get("accessToken");
       const response = await axios.put(
         `${import.meta.env.VITE_APP_URL}/income`,
         {

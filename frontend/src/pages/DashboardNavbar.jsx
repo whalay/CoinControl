@@ -6,6 +6,7 @@ import DashboardMobileNav from "../components/DashboardMobileNav";
 
 const DashboardNavbar = () => {
   const { user } = useAuth();
+  // const user = localStorage.getItem("userData");
 
   return (
     <div className="md:flex justify-between items-center mb-4">
@@ -17,7 +18,7 @@ const DashboardNavbar = () => {
         </div>
       </div>
       <div className="flex flex-row items-center justify-between md:gap-10">
-        <h1 className="text-2xl  ">Welcome, <span className="text-[#EE6338] font-semibold">{user.username}!</span></h1>
+        <h1 className="text-2xl  ">Welcome, <span className="text-[#EE6338] font-semibold">{user?.username}!</span></h1>
         <p>Monday, 27th June 2021</p>
       </div>
       <input

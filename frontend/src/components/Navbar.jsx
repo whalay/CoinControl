@@ -14,7 +14,7 @@ const Navbar = () => {
   return (
     <div className="flex justify-between items-center mt-4">
       <div className="">
-        <img src={coincontrol} alt="logo" className=" md:h-15 h-20 " />
+        <img src={coincontrol} alt="logo" className=" md:h-15 h-12 " />
       </div>
       <div className="md:hidden">
         <MobileNav className="" />

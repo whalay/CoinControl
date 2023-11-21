@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import jsCookie from 'js-cookie'
+
 import { Link } from "react-router-dom";
 import EditBudgetModal from "../components/EditBudgetModal";
 
@@ -15,7 +17,7 @@ const DashBoardBudget = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
+        const token = jsCookie.get("accessToken");
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}`,

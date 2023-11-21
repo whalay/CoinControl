@@ -43,6 +43,7 @@ const LoginPage = () => {
       // You can save it in local storage or a cookie
       // localStorage.setItem("accessToken", response.data.data.access_token);
       // localStorage.setItem('userData', JSON.stringify(response.data.data));
+     console.log(response.data.data)
       login(response);
     } catch (error) {
       // Handle login failure

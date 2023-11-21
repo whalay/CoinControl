@@ -1,6 +1,8 @@
 // BudgetDetail.js
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import jsCookie from 'js-cookie'
+
 import axios from "axios";
 
 const BudgetDetail = () => {
@@ -12,7 +14,7 @@ const BudgetDetail = () => {
   useEffect(() => {
     const fetchBudgetDetail = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
+        const token = jsCookie.get("accessToken");
         const response = await axios.get(
           `${import.meta.env.VITE_APP_URL}/budgets/${budgetId}`,
           {
